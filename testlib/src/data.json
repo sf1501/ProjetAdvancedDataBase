@@ -2,69 +2,102 @@
   "planets": [
     {
       "name": "Sun",
-      "color": "yellow",
-      "size": 60,
+      "size": 1000,
       "position": {
         "x": 0,
         "y": 0,
         "z": 0
       },
-      "rotation_speed": 0
+      "rotation_speed": 0,
+      "texture_url": "sun.jpg"
+    },
+    {
+      "name": "Mercury",
+      "size": 4,
+      "position": {
+        "x": 4000,
+        "y": 0,
+        "z": 0
+      },
+      "rotation_speed": 0.07,
+      "texture_url": "mercury.jpg"
+    },
+    {
+      "name": "Venus",
+      "size": "8",
+      "position": {
+        "x": 7000,
+        "y": 0,
+        "z": 0
+      },
+      "rotation_speed": "0.06",
+      "texture_url": "venus.jpg"
     },
     {
       "name": "Earth",
-      "color": "blue",
-      "size": 20,
+      "size": 10,
       "position": {
-        "x": 200,
+        "x": 10000,
         "y": 0,
         "z": 0
       },
-      "rotation_speed": 0.1
+      "rotation_speed": 0.1,
+      "texture_url": "earth.jpg"
     },
     {
       "name": "Mars",
-      "color": "red",
-      "size": 20,
+      "size": 5,
       "position": {
-        "x": 1000,
+        "x": 15000,
         "y": 0,
         "z": 0
       },
-      "rotation_speed": 0.1
+      "rotation_speed": 0.1,
+      "texture_url": "mars.jpg"
     },
     {
       "name": "Jupiter",
-      "color": "brown",
-      "size": 40,
+      "size": 100,
       "position": {
-        "x": -800,
+        "x": 52000,
         "y": 0,
         "z": 0
       },
-      "rotation_speed": 0.05
+      "rotation_speed": 0.05,
+      "texture_url": "jupiter.jpg"
     },
     {
-      "name": "Mercure",
-      "color": "white",
-      "size": 15,
+      "name": "Saturn",
+      "size": 80,
       "position": {
-        "x": 600,
-        "y": -400,
+        "x": 95000,
+        "y": 0,
         "z": 0
       },
-      "rotation_speed": 0.07
+      "rotation_speed": 0.05,
+      "texture_url": "saturn.jpg"
     },
     {
-      "name": "Saturne",
-      "color": "purple",
-      "size": 25,
+      "name": "Uranus",
+      "size": 40,
       "position": {
-        "x": -200,
-        "y": 600,
+        "x": 192000,
+        "y": 0,
         "z": 0
       },
-      "rotation_speed": 0.05
+      "rotation_speed": "0.02",
+      "texture_url": "uranus.jpg"
+    },
+    {
+      "name": "Neptune",
+      "size": 40,
+      "position": {
+        "x": 300000,
+        "y": 0,
+        "z": 0
+      },
+      "rotation_speed": "0.03",
+      "texture_url": "neptune.jpg"
     }
   ]
 }
