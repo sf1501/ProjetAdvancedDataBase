@@ -1,0 +1,70 @@
+{
+  "planets": [
+    {
+      "name": "Sun",
+      "color": "yellow",
+      "size": 60,
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "rotation_speed": 0
+    },
+    {
+      "name": "Earth",
+      "color": "blue",
+      "size": 20,
+      "position": {
+        "x": 200,
+        "y": 0,
+        "z": 0
+      },
+      "rotation_speed": 0.1
+    },
+    {
+      "name": "Mars",
+      "color": "red",
+      "size": 20,
+      "position": {
+        "x": 1000,
+        "y": 0,
+        "z": 0
+      },
+      "rotation_speed": 0.1
+    },
+    {
+      "name": "Jupiter",
+      "color": "brown",
+      "size": 40,
+      "position": {
+        "x": -800,
+        "y": 0,
+        "z": 0
+      },
+      "rotation_speed": 0.05
+    },
+    {
+      "name": "Mercure",
+      "color": "white",
+      "size": 15,
+      "position": {
+        "x": 600,
+        "y": -400,
+        "z": 0
+      },
+      "rotation_speed": 0.07
+    },
+    {
+      "name": "Saturne",
+      "color": "purple",
+      "size": 25,
+      "position": {
+        "x": -200,
+        "y": 600,
+        "z": 0
+      },
+      "rotation_speed": 0.05
+    }
+  ]
+}
