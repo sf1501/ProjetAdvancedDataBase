@@ -1,14 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
-import gsap from "gsap";
+
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+
 import data from "./data.json";
 import {
   createCamera,
+  createPlanetaryOrbits,
   createPlanetarySystem,
   createSpaceshipsList,
   doggyCurveTrajectory,
 } from "./utils";
+
 // ^ Y
 // |
 // |
@@ -19,22 +22,8 @@ import {
 function App() {
   let refContainer = useRef();
   const [displayedFrame, setDisplayedFrame] = useState(1);
-  const [controls, setControls] = useState();
-  const [camera, setCamera] = useState();
-  const [scene, setScene] = useState();
 
   const dataPlanets = data.planets;
-
-  const zoomInTimeline = (planetName, zoomOutFactor = 400) => {
-    const mesh = scene.getObjectByProperty("name", planetName);
-    const x = mesh.position.x;
-    const y = mesh.position.y;
-    const z = mesh.position.z;
-    let tl = gsap
-      .timeline({ defaults: { duration: 1.5, ease: "expo.out" } })
-      .to(controls.target, { x, y, z })
-      .to(camera.position, { x, y, z: z + zoomOutFactor }, 0);
-  };
 
   useEffect(() => {
     const { current: container } = refContainer;
@@ -46,41 +35,74 @@ function App() {
     const scene = new THREE.Scene();
     scene.background = new THREE.TextureLoader().load("milky_way.jpg");
 
+    const ambientLight = new THREE.AmbientLight(0xffffff, 30);
+    scene.add(ambientLight);
+
     const camera = createCamera();
     scene.add(camera);
+
     const planetarySystem = createPlanetarySystem(dataPlanets);
     scene.add(planetarySystem);
 
+    const orbitSystem = createPlanetaryOrbits(dataPlanets);
+    scene.add(orbitSystem);
+
     const target = new THREE.Vector3(0, 0, 0);
-    camera.position.z = 3000;
+    camera.position.x = 17000;
+    camera.position.y = 4400;
+    camera.position.z = 8900;
+
     const controls = new OrbitControls(camera, renderer.domElement);
-    controls.autoRotate = true;
     controls.target = target;
+
     let spaceshipsList = createSpaceshipsList();
+
     let travelingSpaceshipsList = [];
+
+    let focusedObject = "";
+    let zoomOutFactor = 0;
+
+    //Bind
+    for (let plt of dataPlanets) {
+      document.getElementById(plt.name).addEventListener("click", () => {
+        document.getElementById("focusedObject").innerHTML = plt.name;
+        focusedObject = plt.name;
+      });
+    }
+    document.addEventListener("wheel", (event) => {
+      zoomOutFactor += event.deltaY / 50;
+    });
+
+    const spaceshipList = document.getElementById("spaceshipList");
 
     // Animation
     renderer.setAnimationLoop(() => {
       // Planets animation
       for (let i = 0; i < planetarySystem.children.length; i++) {
-        // planetarySystem.children[i].rotation.z +=
-        //   dataPlanets[i].rotation_speed / 60;
-        planetarySystem.children[i].children[0].rotation.y += 0.01;
+        planetarySystem.children[i].rotation.y +=
+          dataPlanets[i].orbit_rotation_speed / 60;
+        planetarySystem.children[i].children[0].rotation.y +=
+          dataPlanets[i].self_rotation_speed / 10;
       }
+
+      // Spaceships launch
       spaceshipsList.forEach((spaceship) => {
         if (spaceship.launch_date === frame) {
-          const originMesh = planetarySystem.children.find(
-            (orbit) => orbit.children[0].name === spaceship.origin
-          ).children[0];
-          const originPosition = new THREE.Vector3().setFromMatrixPosition(
-            originMesh.matrixWorld
+          const originMesh = scene.getObjectByProperty(
+            "name",
+            spaceship.origin
           );
+          const originPosition = new THREE.Vector3();
+          originMesh.getWorldPosition(originPosition);
 
           spaceship.mesh.position.x = originPosition.x;
           spaceship.mesh.position.y = originPosition.y;
-          spaceship.mesh.position.Z = originPosition.z;
+          spaceship.mesh.position.z = originPosition.z;
+          spaceship.mesh.updateMatrixWorld();
+          spaceship.mesh.updateWorldMatrix();
 
           scene.add(spaceship.mesh);
+
           travelingSpaceshipsList.push(spaceship);
         }
       });
@@ -89,21 +111,53 @@ function App() {
       travelingSpaceshipsList.forEach((spaceship) =>
         doggyCurveTrajectory(spaceship, scene)
       );
+      spaceshipList.innerHTML = "";
+      for (let spaceship of travelingSpaceshipsList) {
+        spaceshipList.innerHTML +=
+          "<span class='item' id='" +
+          spaceship.name +
+          "'>" +
+          spaceship.name +
+          "</span>";
+        document
+          .getElementById(spaceship.name)
+          .addEventListener("mousedown", () => {
+            document.getElementById("focusedObject").innerHTML = spaceship.name;
+            focusedObject = spaceship.name;
+          });
+      }
 
-      // Delete spaceships which arrived at destination
+      // Delete spaceships when they arrived at destination
       travelingSpaceshipsList = travelingSpaceshipsList.filter(
         (spaceship) =>
           scene.getObjectByProperty("uuid", spaceship.mesh.uuid) !== undefined
       );
 
-      frame += 1;
+      if (focusedObject !== "") {
+        const objectOnScene = scene.getObjectByProperty("name", focusedObject);
+        if (objectOnScene) {
+          const vector = new THREE.Vector3();
+          const scale = new THREE.Vector3();
+
+          objectOnScene.getWorldPosition(vector);
+          objectOnScene.getWorldScale(scale);
+
+          controls.target = vector;
+          camera.position.x =
+            vector.x + objectOnScene.scale.x * 10 + zoomOutFactor;
+          camera.position.y =
+            vector.y + objectOnScene.scale.y * 10 + zoomOutFactor;
+          camera.position.z =
+            vector.z + objectOnScene.scale.z * 10 + zoomOutFactor;
+
+          controls.update();
+        }
+      }
 
       setDisplayedFrame((state) => (state += 1));
-      setControls(controls);
-      setCamera(camera);
-      setScene(scene);
-
       renderer.render(scene, camera);
+
+      frame += 1;
     });
 
     return () => {
@@ -113,22 +167,17 @@ function App() {
 
   return (
     <div style={{ display: "flex" }} ref={refContainer}>
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          position: "absolute",
-          top: "10px",
-          right: "10px",
-          color: "white",
-        }}
-      >
+      <span id="focusedObject" className="planetName"></span>
+      <div className="rightPanel">
         <span>Temps d'execution: {Math.ceil(displayedFrame / 60)} s</span>
-        <ul>
+        <div className="planetList">
           {dataPlanets.map((planet) => (
-            <li onClick={() => zoomInTimeline(planet.name)}>{planet.name}</li>
+            <span id={planet.name} className="item">
+              {planet.name}
+            </span>
           ))}
-        </ul>
+        </div>
+        <div id="spaceshipList" className="planetList"></div>
       </div>
     </div>
   );

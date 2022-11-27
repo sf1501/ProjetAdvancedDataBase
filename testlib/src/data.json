@@ -8,7 +8,8 @@
         "y": 0,
         "z": 0
       },
-      "rotation_speed": 0,
+      "orbit_rotation_speed": 0,
+      "self_rotation_speed": 0.01,
       "texture_url": "sun.jpg"
     },
     {
@@ -19,18 +20,20 @@
         "y": 0,
         "z": 0
       },
-      "rotation_speed": 0.07,
+      "orbit_rotation_speed": 0.07,
+      "self_rotation_speed": 0.01,
       "texture_url": "mercury.jpg"
     },
     {
       "name": "Venus",
-      "size": "8",
+      "size": 8,
       "position": {
         "x": 7000,
         "y": 0,
         "z": 0
       },
-      "rotation_speed": "0.06",
+      "orbit_rotation_speed": 0.06,
+      "self_rotation_speed": 0.01,
       "texture_url": "venus.jpg"
     },
     {
@@ -41,7 +44,8 @@
         "y": 0,
         "z": 0
       },
-      "rotation_speed": 0.1,
+      "orbit_rotation_speed": 0.1,
+      "self_rotation_speed": 0.01,
       "texture_url": "earth.jpg"
     },
     {
@@ -52,7 +56,8 @@
         "y": 0,
         "z": 0
       },
-      "rotation_speed": 0.1,
+      "orbit_rotation_speed": 0.05,
+      "self_rotation_speed": 0.01,
       "texture_url": "mars.jpg"
     },
     {
@@ -63,7 +68,8 @@
         "y": 0,
         "z": 0
       },
-      "rotation_speed": 0.05,
+      "orbit_rotation_speed": 0.05,
+      "self_rotation_speed": 0.01,
       "texture_url": "jupiter.jpg"
     },
     {
@@ -74,7 +80,8 @@
         "y": 0,
         "z": 0
       },
-      "rotation_speed": 0.05,
+      "orbit_rotation_speed": 0.05,
+      "self_rotation_speed": 0.01,
       "texture_url": "saturn.jpg"
     },
     {
@@ -85,7 +92,8 @@
         "y": 0,
         "z": 0
       },
-      "rotation_speed": "0.02",
+      "orbit_rotation_speed": 0.02,
+      "self_rotation_speed": 0.01,
       "texture_url": "uranus.jpg"
     },
     {
@@ -96,7 +104,8 @@
         "y": 0,
         "z": 0
       },
-      "rotation_speed": "0.03",
+      "orbit_rotation_speed": 0.03,
+      "self_rotation_speed": 0.01,
       "texture_url": "neptune.jpg"
     }
   ]
