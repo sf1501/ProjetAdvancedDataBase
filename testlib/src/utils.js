@@ -62,51 +62,43 @@ export function createCamera() {
   );
 }
 
-export function createSpaceshipsList() {
+export async function fetchSpaceships() {
+  let dataSpaceships = await fetch("journeys.json");
+  dataSpaceships = await dataSpaceships.json();
+  return dataSpaceships;
+}
+
+export async function createSpaceshipsList() {
+  let queue = [];
+  const journeys = await fetchSpaceships();
+
   const loader = new GLTFLoader();
 
   let spaceshipObject = new THREE.Group();
 
-  let queue = [];
-  const planetsList = [
-    "Earth",
-    "Mars",
-    "Saturn",
-    "Mercury",
-    "Jupiter",
-    "Uranus",
-    "Neptune",
-    "Venus",
-  ];
-
+  // Generate all spaceships 3D objects
   loader.load(
     "free_spaceship.glb",
     (gltf) => {
       spaceshipObject = gltf.scene;
       spaceshipObject.scale.setScalar(0.2);
-
-      for (let i = 0; i < 10; i++) {
-        const newSpaceship = spaceshipObject.clone();
-        newSpaceship.name = "Orion" + i;
-
-        queue.push({
-          name: "Orion" + i,
-          mesh: newSpaceship,
-          origin: planetsList[Math.floor(Math.random() * planetsList.length)],
-          target: planetsList[Math.floor(Math.random() * planetsList.length)],
-          speed: 50,
-          launch_date: Math.floor(Math.random() * 10000 + 1),
-        });
-      }
-      queue.sort(
-        (spaceshipA, spaceshipB) =>
-          spaceshipA.launch_date - spaceshipB.launch_date
-      );
     },
     undefined,
     (error) => {
       console.error(error);
     }
+  );
+  for (let i = 0; i < journeys.length; i++) {
+    const newSpaceship = spaceshipObject.clone();
+    newSpaceship.name = journeys[i].spaceship_number;
+
+    queue.push({
+      mesh: newSpaceship,
+      ...journeys[i],
+    });
+  }
+  queue.sort(
+    (spaceshipA, spaceshipB) => spaceshipA.launch_date - spaceshipB.launch_date
   );
 
   return queue;

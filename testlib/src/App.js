@@ -1,9 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
+import moment from "moment";
 
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
 import data from "./data.json";
+import InfoPlanet from "./infoPlanet";
 import {
   createCamera,
   createPlanetaryOrbits,
@@ -19,15 +23,32 @@ import {
 // |
 // |
 // ---------> X
+
+const darkTheme = createTheme({
+  palette: {
+    mode: "dark",
+  },
+});
+
 function App() {
   let refContainer = useRef();
-  const [displayedFrame, setDisplayedFrame] = useState(1);
-
+  const [globalTimer, setGlobalTimer] = useState(moment());
+  const [globalFocusedObject, setGlobalFocusedObject] = useState("");
   const dataPlanets = data.planets;
+
+  const planetsList = [
+    "Earth",
+    "Mars",
+    "Saturn",
+    "Mercury",
+    "Jupiter",
+    "Uranus",
+    "Neptune",
+    "Venus",
+  ];
 
   useEffect(() => {
     const { current: container } = refContainer;
-    let frame = 1;
     const renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
     container.appendChild(renderer.domElement);
@@ -69,11 +90,16 @@ function App() {
         focusedObject = plt.name;
       });
     }
-    document.addEventListener("wheel", (event) => {
+    document.getElementById("info")?.addEventListener("wheel", (event) => {
+      event.stopPropagation();
+    });
+    document.getElementById("container").addEventListener("wheel", (event) => {
+      event.stopPropagation();
       zoomOutFactor += event.deltaY / 50;
     });
 
-    const spaceshipList = document.getElementById("spaceshipList");
+    setGlobalTimer(moment().hours(7).minutes(0).seconds(0));
+    let timer = moment().hours(7).minutes(0).seconds(0);
 
     // Animation
     renderer.setAnimationLoop(() => {
@@ -86,46 +112,31 @@ function App() {
       }
 
       // Spaceships launch
-      spaceshipsList.forEach((spaceship) => {
-        if (spaceship.launch_date === frame) {
-          const originMesh = scene.getObjectByProperty(
-            "name",
-            spaceship.origin
-          );
-          const originPosition = new THREE.Vector3();
-          originMesh.getWorldPosition(originPosition);
+      // spaceshipsList.forEach((spaceship) => {
+      //   if (spaceship.departure_hour === timer.format("HH:mm")) {
+      //     const originMesh = scene.getObjectByProperty(
+      //       "name",
+      //       spaceship.origin
+      //     );
+      //     const originPosition = new THREE.Vector3();
+      //     originMesh.getWorldPosition(originPosition);
 
-          spaceship.mesh.position.x = originPosition.x;
-          spaceship.mesh.position.y = originPosition.y;
-          spaceship.mesh.position.z = originPosition.z;
-          spaceship.mesh.updateMatrixWorld();
-          spaceship.mesh.updateWorldMatrix();
+      //     spaceship.mesh.position.x = originPosition.x;
+      //     spaceship.mesh.position.y = originPosition.y;
+      //     spaceship.mesh.position.z = originPosition.z;
+      //     spaceship.mesh.updateMatrixWorld();
+      //     spaceship.mesh.updateWorldMatrix();
 
-          scene.add(spaceship.mesh);
+      //     scene.add(spaceship.mesh);
 
-          travelingSpaceshipsList.push(spaceship);
-        }
-      });
+      //     travelingSpaceshipsList.push(spaceship);
+      //   }
+      // });
 
       // Spaceships animation
       travelingSpaceshipsList.forEach((spaceship) =>
         doggyCurveTrajectory(spaceship, scene)
       );
-      spaceshipList.innerHTML = "";
-      for (let spaceship of travelingSpaceshipsList) {
-        spaceshipList.innerHTML +=
-          "<span class='item' id='" +
-          spaceship.name +
-          "'>" +
-          spaceship.name +
-          "</span>";
-        document
-          .getElementById(spaceship.name)
-          .addEventListener("mousedown", () => {
-            document.getElementById("focusedObject").innerHTML = spaceship.name;
-            focusedObject = spaceship.name;
-          });
-      }
 
       // Delete spaceships when they arrived at destination
       travelingSpaceshipsList = travelingSpaceshipsList.filter(
@@ -153,11 +164,11 @@ function App() {
           controls.update();
         }
       }
+      setGlobalFocusedObject(focusedObject);
+      timer = moment(timer).add(1, "s");
+      setGlobalTimer(moment(timer).add(1, "s"));
 
-      setDisplayedFrame((state) => (state += 1));
       renderer.render(scene, camera);
-
-      frame += 1;
     });
 
     return () => {
@@ -166,10 +177,14 @@ function App() {
   }, []);
 
   return (
-    <div style={{ display: "flex" }} ref={refContainer}>
+    <ThemeProvider theme={darkTheme}>
+      <CssBaseline />
+      {planetsList.find((planet) => planet === globalFocusedObject) ? (
+        <InfoPlanet id={planetsList.indexOf(globalFocusedObject)} />
+      ) : null}
       <span id="focusedObject" className="planetName"></span>
       <div className="rightPanel">
-        <span>Temps d'execution: {Math.ceil(displayedFrame / 60)} s</span>
+        <span>Timer: {globalTimer.format("HH:mm")}</span>
         <div className="planetList">
           {dataPlanets.map((planet) => (
             <span id={planet.name} className="item">
@@ -177,9 +192,9 @@ function App() {
             </span>
           ))}
         </div>
-        <div id="spaceshipList" className="planetList"></div>
       </div>
-    </div>
+      <div style={{ display: "flex" }} ref={refContainer} id="container"></div>
+    </ThemeProvider>
   );
 }
 
