@@ -20,17 +20,26 @@ const InfoPlanet = memo(function InfoPlanet({ id }) {
     async function fetchData() {
       let dataFetched = await fetch("journeys.json");
       dataFetched = await dataFetched.json();
+      dataFetched = dataFetched.data;
+
       dataFetched.forEach((journey) => {
         journey.origin = planetsList[journey.origin];
 
         journey.destination = planetsList[journey.destination];
       });
-      let dataDeparturesFetched = dataFetched.filter(
-        (journey) => journey.origin === planetsList[id]
-      );
-      let dataArrivalsFetched = dataFetched.filter(
-        (journey) => journey.destination === planetsList[id]
-      );
+      let dataDeparturesFetched = dataFetched
+        .filter((journey) => journey.origin === planetsList[id])
+        .sort(
+          (journeyA, journeyB) =>
+            parseInt(journeyA.departure_hour) -
+            parseInt(journeyB.departure_hour)
+        );
+      let dataArrivalsFetched = dataFetched
+        .filter((journey) => journey.destination === planetsList[id])
+        .sort(
+          (journeyA, journeyB) =>
+            parseInt(journeyA.arrival_hour) - parseInt(journeyB.arrival_hour)
+        );
 
       setDataDepartures(dataDeparturesFetched);
       setDataArrivales(dataArrivalsFetched);

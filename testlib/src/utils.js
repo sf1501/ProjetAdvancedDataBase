@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import dayjs from "dayjs";
 
 export function orbitLine(radius, y = 0) {
   let geometry = new THREE.BufferGeometry().setFromPoints(
@@ -62,46 +63,43 @@ export function createCamera() {
   );
 }
 
-export async function fetchSpaceships() {
-  let dataSpaceships = await fetch("journeys.json");
-  dataSpaceships = await dataSpaceships.json();
-  return dataSpaceships;
-}
-
-export async function createSpaceshipsList() {
-  let queue = [];
-  const journeys = await fetchSpaceships();
-
+export async function createSpaceshipsList(scene) {
   const loader = new GLTFLoader();
-
   let spaceshipObject = new THREE.Group();
 
-  // Generate all spaceships 3D objects
   loader.load(
     "free_spaceship.glb",
     (gltf) => {
       spaceshipObject = gltf.scene;
       spaceshipObject.scale.setScalar(0.2);
+
+      fetch("journeys.json")
+        .then((data) => data.json())
+        .then((journeys) => {
+          journeys = journeys.data;
+
+          console.log(spaceshipObject);
+          // Generate all spaceships 3D objects
+
+          for (let i = 0; i < journeys.length; i++) {
+            const newSpaceship = spaceshipObject.clone();
+            newSpaceship.idJourney = journeys[i].id;
+            newSpaceship.name = journeys[i].spaceship_number;
+            newSpaceship.origin = journeys[i].origin;
+            newSpaceship.destination = journeys[i].destination;
+            newSpaceship.departure_hour = journeys[i].departure_hour;
+            newSpaceship.arrival_hour = journeys[i].arrival_hour;
+            newSpaceship.delay = journeys[i].delay;
+
+            scene.add(newSpaceship);
+          }
+        });
     },
     undefined,
     (error) => {
       console.error(error);
     }
   );
-  for (let i = 0; i < journeys.length; i++) {
-    const newSpaceship = spaceshipObject.clone();
-    newSpaceship.name = journeys[i].spaceship_number;
-
-    queue.push({
-      mesh: newSpaceship,
-      ...journeys[i],
-    });
-  }
-  queue.sort(
-    (spaceshipA, spaceshipB) => spaceshipA.launch_date - spaceshipB.launch_date
-  );
-
-  return queue;
 }
 
 export function doggyCurveTrajectory(spaceship, scene) {

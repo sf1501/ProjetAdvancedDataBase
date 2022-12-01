@@ -2,9 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
-import moment from "moment";
 
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import dayjs from "dayjs";
 
 import data from "./data.json";
 import InfoPlanet from "./infoPlanet";
@@ -32,8 +32,10 @@ const darkTheme = createTheme({
 
 function App() {
   let refContainer = useRef();
-  const [globalTimer, setGlobalTimer] = useState(moment());
+  const [globalTimer, setGlobalTimer] = useState(dayjs());
   const [globalFocusedObject, setGlobalFocusedObject] = useState("");
+  const [spaceshipsList, setSpaceshipsList] = useState([]);
+
   const dataPlanets = data.planets;
 
   const planetsList = [
@@ -76,8 +78,7 @@ function App() {
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.target = target;
 
-    let spaceshipsList = createSpaceshipsList();
-
+    createSpaceshipsList(scene);
     let travelingSpaceshipsList = [];
 
     let focusedObject = "";
@@ -98,8 +99,8 @@ function App() {
       zoomOutFactor += event.deltaY / 50;
     });
 
-    setGlobalTimer(moment().hours(7).minutes(0).seconds(0));
-    let timer = moment().hours(7).minutes(0).seconds(0);
+    setGlobalTimer(dayjs().hour(7).minute(0).second(0));
+    let timer = dayjs().hour(7).minute(0).second(0);
 
     // Animation
     renderer.setAnimationLoop(() => {
@@ -110,28 +111,32 @@ function App() {
         planetarySystem.children[i].children[0].rotation.y +=
           dataPlanets[i].self_rotation_speed / 10;
       }
-
       // Spaceships launch
-      // spaceshipsList.forEach((spaceship) => {
-      //   if (spaceship.departure_hour === timer.format("HH:mm")) {
-      //     const originMesh = scene.getObjectByProperty(
-      //       "name",
-      //       spaceship.origin
-      //     );
-      //     const originPosition = new THREE.Vector3();
-      //     originMesh.getWorldPosition(originPosition);
+      // console.log(scene.getObjectByName("spaceshipsGroup"));
+      scene.children.forEach((spaceship) => {
+        if (spaceship.departure_hour === timer.format("HH:mm")) {
+          console.log(
+            "blast off !",
+            timer.format("HH:mm"),
+            spaceship.departure_hour
+          );
+          const originMesh = scene.getObjectByProperty(
+            "name",
+            planetsList[spaceship.origin]
+          );
+          const originPosition = new THREE.Vector3();
+          originMesh.getWorldPosition(originPosition);
 
-      //     spaceship.mesh.position.x = originPosition.x;
-      //     spaceship.mesh.position.y = originPosition.y;
-      //     spaceship.mesh.position.z = originPosition.z;
-      //     spaceship.mesh.updateMatrixWorld();
-      //     spaceship.mesh.updateWorldMatrix();
-
-      //     scene.add(spaceship.mesh);
-
-      //     travelingSpaceshipsList.push(spaceship);
-      //   }
-      // });
+          spaceship.position.x = originPosition.x;
+          spaceship.position.y = originPosition.y;
+          spaceship.position.z = originPosition.z;
+          spaceship.updateMatrixWorld();
+          spaceship.updateWorldMatrix();
+          console.log(spaceship.position);
+          focusedObject = spaceship.name;
+          // travelingSpaceshipsList.push(spaceship);
+        }
+      });
 
       // Spaceships animation
       travelingSpaceshipsList.forEach((spaceship) =>
@@ -165,8 +170,9 @@ function App() {
         }
       }
       setGlobalFocusedObject(focusedObject);
-      timer = moment(timer).add(1, "s");
-      setGlobalTimer(moment(timer).add(1, "s"));
+
+      timer = dayjs(timer).add(1, "s");
+      setGlobalTimer(dayjs(timer).add(1, "s"));
 
       renderer.render(scene, camera);
     });
