@@ -90,6 +90,25 @@ app.get('/voyage/heure_arrivee/:heure_arrivee', function(req, res) {
   requete = `SELECT id_voyage type gare_depart gare_arrivee heure_depart heure_arrivee retard FROM voyage.db WHERE heure_arrivee=${heureA}`
   res.send(requete);
 });
+
+// requete pour recuperer tous les voyages dans un intervale de temps donné
+app.get('/voyage/heure_depart/:heure_depart/heure_arrivee/:heure_arrivee', function(req, res) {
+  parametre  = req.params
+  heureD = parametre.heure_depart
+  heureA = parametre.heure_arrivee
+  requete = `SELECT id_voyage type gare_depart gare_arrivee heure_depart heure_arrivee retard FROM voyage.db WHERE heure_depart > ${heureD} AND heure_arrivee < ${heureA} `
+  res.send(requete);
+});
+
+// requete pour recuperer un voyage qui fait son départ d'une station donné
+app.get('/station/:idStation/voyage/:idVoyage', function(req, res){
+  parametre = req.params
+  idVoyage = parametre.idVoyage
+  idStation = parametre.idStation
+  requete = `SELECT id_voyage type gare_depart gare_arrivee heure_depart heure_arrivee retard FROM voyage.db WHERE gare_depart = ${idStation}`
+  res.send(requete);
+}); 
+
 // requete pour recuperer tous les voyage qui arrive avec retard souhaité
 
 app.get('/voyage/retard/:retard', function(req, res) {
