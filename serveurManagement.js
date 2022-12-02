@@ -9,9 +9,8 @@ app.get('/', function(req, res) {
 });
 
 app.get('/train/', function(req, res) {
-  idTrain = req.params
 
-  res.send('hello station '+idTrain);
+  res.send('hello station ');
 });
 
 app.get('/train/:idTrain', function(req, res) {
