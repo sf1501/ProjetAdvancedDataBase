@@ -28,12 +28,14 @@ export default function InfoTable({ type, rows }) {
           <TableBody>
             {rows.map((row, id) => (
               <TableRow
+                hover
                 key={id}
                 sx={{
                   "&:last-child td, &:last-child th": { border: 0 },
                   height: 15,
                   maxHeight: 15,
                 }}
+                id={row.spaceship_number}
               >
                 <TableCell component="th" scope="row">
                   {row.spaceship_number}

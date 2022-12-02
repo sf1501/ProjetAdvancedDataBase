@@ -1,20 +1,15 @@
 import { useEffect, memo, useState } from "react";
+import { planetsList } from "./const";
 import InfoTable from "./table";
+import { timerToSeconds } from "./utils";
+
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+dayjs.extend(customParseFormat);
 
 const InfoPlanet = memo(function InfoPlanet({ id }) {
   const [dataDepartures, setDataDepartures] = useState([]);
   const [dataArrivals, setDataArrivales] = useState([]);
-
-  const planetsList = [
-    "Earth",
-    "Mars",
-    "Saturn",
-    "Mercury",
-    "Jupiter",
-    "Uranus",
-    "Neptune",
-    "Venus",
-  ];
 
   useEffect(() => {
     async function fetchData() {
@@ -31,14 +26,15 @@ const InfoPlanet = memo(function InfoPlanet({ id }) {
         .filter((journey) => journey.origin === planetsList[id])
         .sort(
           (journeyA, journeyB) =>
-            parseInt(journeyA.departure_hour) -
-            parseInt(journeyB.departure_hour)
+            timerToSeconds(dayjs(journeyA.departure_hour, "HH:mm:ss")) -
+            timerToSeconds(dayjs(journeyB.departure_hour, "HH:mm:ss"))
         );
       let dataArrivalsFetched = dataFetched
         .filter((journey) => journey.destination === planetsList[id])
         .sort(
           (journeyA, journeyB) =>
-            parseInt(journeyA.arrival_hour) - parseInt(journeyB.arrival_hour)
+            timerToSeconds(dayjs(journeyA.arrival_hour, "HH:mm:ss")) -
+            timerToSeconds(dayjs(journeyB.arrival_hour, "HH:mm:ss"))
         );
 
       setDataDepartures(dataDeparturesFetched);

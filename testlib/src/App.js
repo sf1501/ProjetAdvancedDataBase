@@ -14,7 +14,9 @@ import {
   createPlanetarySystem,
   createSpaceshipsList,
   doggyCurveTrajectory,
+  progressiveTrajectory,
 } from "./utils";
+import { planetsList } from "./const";
 
 // ^ Y
 // |
@@ -34,20 +36,8 @@ function App() {
   let refContainer = useRef();
   const [globalTimer, setGlobalTimer] = useState(dayjs());
   const [globalFocusedObject, setGlobalFocusedObject] = useState("");
-  const [spaceshipsList, setSpaceshipsList] = useState([]);
 
   const dataPlanets = data.planets;
-
-  const planetsList = [
-    "Earth",
-    "Mars",
-    "Saturn",
-    "Mercury",
-    "Jupiter",
-    "Uranus",
-    "Neptune",
-    "Venus",
-  ];
 
   useEffect(() => {
     const { current: container } = refContainer;
@@ -58,7 +48,7 @@ function App() {
     const scene = new THREE.Scene();
     scene.background = new THREE.TextureLoader().load("milky_way.jpg");
 
-    const ambientLight = new THREE.AmbientLight(0xffffff, 30);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 300);
     scene.add(ambientLight);
 
     const camera = createCamera();
@@ -84,7 +74,7 @@ function App() {
     let focusedObject = "";
     let zoomOutFactor = 0;
 
-    //Bind
+    //Bindings
     for (let plt of dataPlanets) {
       document.getElementById(plt.name).addEventListener("click", () => {
         document.getElementById("focusedObject").innerHTML = plt.name;
@@ -107,19 +97,20 @@ function App() {
       // Planets animation
       for (let i = 0; i < planetarySystem.children.length; i++) {
         planetarySystem.children[i].rotation.y +=
-          dataPlanets[i].orbit_rotation_speed / 60;
+          dataPlanets[i].orbit_rotation_speed / 600;
         planetarySystem.children[i].children[0].rotation.y +=
           dataPlanets[i].self_rotation_speed / 10;
       }
       // Spaceships launch
       // console.log(scene.getObjectByName("spaceshipsGroup"));
       scene.children.forEach((spaceship) => {
-        if (spaceship.departure_hour === timer.format("HH:mm")) {
-          console.log(
-            "blast off !",
-            timer.format("HH:mm"),
-            spaceship.departure_hour
-          );
+        // console.log(spaceship.departure_hour, timer.format("HH:mm:ss"));
+        if (
+          dayjs(spaceship.departure_hour, "HH:mm:ss")
+            .add(spaceship.delay, "s")
+            .format("HH:mm:ss") === timer.format("HH:mm:ss")
+        ) {
+          console.log("blast off!");
           const originMesh = scene.getObjectByProperty(
             "name",
             planetsList[spaceship.origin]
@@ -132,39 +123,71 @@ function App() {
           spaceship.position.z = originPosition.z;
           spaceship.updateMatrixWorld();
           spaceship.updateWorldMatrix();
-          console.log(spaceship.position);
-          focusedObject = spaceship.name;
-          // travelingSpaceshipsList.push(spaceship);
+
+          document
+            .getElementById(spaceship.name)
+            .addEventListener("click", () => {
+              console.log("clicked");
+              document.getElementById("focusedObject").innerHTML =
+                spaceship.name;
+              focusedObject = spaceship.name;
+            });
+
+          //line
+          const material = new THREE.LineDashedMaterial({
+            color: 0xffffff,
+            linewidth: 1,
+            scale: 1,
+            dashSize: 50,
+            gapSize: 50,
+          });
+          const points = [];
+          points.push(new THREE.Vector3(0, 0, 0));
+          points.push(new THREE.Vector3(0, 0, 0));
+
+          const geometry = new THREE.BufferGeometry().setFromPoints(points);
+          const line = new THREE.Line(geometry, material);
+          line.name = spaceship.name + spaceship.origin + spaceship.destination;
+
+          scene.add(line);
+
+          travelingSpaceshipsList.push(spaceship.name);
         }
       });
 
       // Spaceships animation
-      travelingSpaceshipsList.forEach((spaceship) =>
-        doggyCurveTrajectory(spaceship, scene)
+      travelingSpaceshipsList.forEach((spaceshipName) =>
+        progressiveTrajectory(spaceshipName, scene, timer)
       );
 
       // Delete spaceships when they arrived at destination
       travelingSpaceshipsList = travelingSpaceshipsList.filter(
-        (spaceship) =>
-          scene.getObjectByProperty("uuid", spaceship.mesh.uuid) !== undefined
+        (spaceshipName) =>
+          scene.getObjectByProperty("name", spaceshipName) !== undefined
       );
 
       if (focusedObject !== "") {
         const objectOnScene = scene.getObjectByProperty("name", focusedObject);
         if (objectOnScene) {
-          const vector = new THREE.Vector3();
-          const scale = new THREE.Vector3();
+          const newCameraVector = new THREE.Vector3();
 
-          objectOnScene.getWorldPosition(vector);
-          objectOnScene.getWorldScale(scale);
+          objectOnScene.getWorldPosition(newCameraVector);
+          const scaleFactor = objectOnScene.name.length > 10 ? 20 : 10;
 
-          controls.target = vector;
+          controls.target = newCameraVector;
+
           camera.position.x =
-            vector.x + objectOnScene.scale.x * 10 + zoomOutFactor;
+            newCameraVector.x +
+            objectOnScene.scale.x * scaleFactor +
+            zoomOutFactor;
           camera.position.y =
-            vector.y + objectOnScene.scale.y * 10 + zoomOutFactor;
+            newCameraVector.y +
+            objectOnScene.scale.y * scaleFactor +
+            zoomOutFactor;
           camera.position.z =
-            vector.z + objectOnScene.scale.z * 10 + zoomOutFactor;
+            newCameraVector.z +
+            objectOnScene.scale.z * scaleFactor +
+            zoomOutFactor;
 
           controls.update();
         }
@@ -190,7 +213,7 @@ function App() {
       ) : null}
       <span id="focusedObject" className="planetName"></span>
       <div className="rightPanel">
-        <span>Timer: {globalTimer.format("HH:mm")}</span>
+        <span>Timer: {globalTimer.format("HH:mm:ss")}</span>
         <div className="planetList">
           {dataPlanets.map((planet) => (
             <span id={planet.name} className="item">
