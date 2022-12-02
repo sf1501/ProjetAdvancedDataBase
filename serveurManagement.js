@@ -48,18 +48,28 @@ app.get('/voyage/:type', function(req, res) {
   res.send(requette);
 });
 
+// requette pour recuperer tous les voyage qui part de la gare_depart souhaité
 app.get('/voyage/:gare_depart', function(req, res) {
   res.send(requette);
 });
+// requette pour recuperer tous les voyage qui arrive  a la gare_arrivee souhaité
+
 app.get('/voyage/:gare_arrivee', function(req, res) {
   res.send(requette);
 });
+// requette pour recuperer tous les voyage qui part a heure_depart souhaité
+
 app.get('/voyage/:heure_depart', function(req, res) {
   res.send(requette);
 });
+
+// requette pour recuperer tous les voyage qui arrive a l'heure_arrivee souhaité
+
 app.get('/voyage/:heure_arrivee', function(req, res) {
   res.send(requette);
 });
+// requette pour recuperer tous les voyage qui arrive avec retard souhaité
+
 app.get('/voyage/:retard', function(req, res) {
   res.send(requette);
 });
