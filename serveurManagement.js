@@ -8,93 +8,95 @@ app.get('/', function(req, res) {
     res.send('hello acceuil');
 });
 
-// requette pour recuperer tous les trains
+// requete pour recuperer tous les trains
 app.get('/train/', function(req, res) {
-  requette = `SELECT id_train name capacite id_voyage FROM train.db WHERE capacite>0`
-  res.send(requette);
+  requete = `SELECT id_train name capacite id_voyage FROM train.db WHERE capacite>0`
+  res.send(requete);
 
 });
-// requette pour recuperer train par id
+// requete pour recuperer train par id
 
 app.get('/train/:idTrain', function(req, res) {
   trainId = req.params.idTrain
-  requette = `SELECT id_train name capacite id_voyage FROM train.db WHERE id_train=${trainId}`
+  requete = `SELECT id_train name capacite id_voyage FROM train.db WHERE id_train=${trainId}`
 
-  res.send(requette);
+  res.send(requete);
 });
 
-// requette pour recuperer tous les stations
+// requete pour recuperer tous les stations
 
 app.get('/station/',function(req,res){
-  requette = `SELECT id_gare name nb_voie FROM gard.db WHERE nb_voie>0`
+  requete = `SELECT id_gare name nb_voie FROM gard.db WHERE nb_voie>0`
+  res.send(requete);
 });
 
-// requette pour recuperer station par id
+// requete pour recuperer station par id
 
 app.get('/station/:idStation', function(req, res) {
   stationId = req.params.idStation
-  requette = `SELECT id_gare name nb_voie FROM gard.db WHERE id_gare=${stationId}`
-  res.send(requette);
+  requete = `SELECT id_gare name nb_voie FROM gard.db WHERE id_gare=${stationId}`
+  res.send(requete);
 });
 
-// requette pour recuperer tous les voyages
+// requete pour recuperer tous les voyages
 
 app.get('/voyage/',function(req,res){
-  requette = `SELECT id_voyage type gare_depart gare_arrivee heure_depart heure_arrivee retard FROM voyage.db WHERE heure_depart>00:00`
+  requete = `SELECT id_voyage type gare_depart gare_arrivee heure_depart heure_arrivee retard FROM voyage.db WHERE heure_depart>00:00`
+  res.send(requete);
 })
 
-app.get('/voyage/:id', function(req, res) {
-  parametre  = res.params
-  voyageId = parametre.id
-  requette = `SELECT id_voyage type gare_depart gare_arrivee heure_depart heure_arrivee retard FROM voyage.db WHERE id_voyage=${voyageId}`
-  res.send(requette);
+app.get('/voyage/:idVoyage', function(req, res) {
+  parametre  = req.params
+  voyageId = parametre.idVoyage
+  requete = `SELECT id_voyage type gare_depart gare_arrivee heure_depart heure_arrivee retard FROM voyage.db WHERE id_voyage=${voyageId}`
+  res.send(requete);
 });
 app.get('/voyage/type/:type', function(req, res) {
-  parametre  = res.params
+  parametre  = req.params
   typeVoyage = parametre.type
-  requette = `SELECT id_voyage type gare_depart gare_arrivee heure_depart heure_arrivee retard FROM voyage.db WHERE type=${typeVoyage}`
-  res.send(requette);
+  requete = `SELECT id_voyage type gare_depart gare_arrivee heure_depart heure_arrivee retard FROM voyage.db WHERE type=${typeVoyage}`
+  res.send(requete);
 });
 
-// requette pour recuperer tous les voyage qui part de la gare_depart souhaité
+// requete pour recuperer tous les voyage qui part de la gare_depart souhaité
 app.get('/voyage/gare_depart/:gare_depart', function(req, res) {
-  parametre  = res.params
+  parametre  = req.params
   gareD = parametre.gare_depart
-  requette = `SELECT id_voyage type gare_depart gare_arrivee heure_depart heure_arrivee retard FROM voyage.db WHERE gare_depart=${gareD}`
-  res.send(requette);
+  requete = `SELECT id_voyage type gare_depart gare_arrivee heure_depart heure_arrivee retard FROM voyage.db WHERE gare_depart=${gareD}`
+  res.send(requete);
 });
-// requette pour recuperer tous les voyage qui arrive  a la gare_arrivee souhaité
+// requete pour recuperer tous les voyage qui arrive  a la gare_arrivee souhaité
 
 app.get('/voyage/gare_arrivee/:gare_arrivee', function(req, res) {
-  parametre  = res.params
+  parametre  = req.params
   gareA = parametre.gare_arrivee
-  requette = `SELECT id_voyage type gare_depart gare_arrivee heure_depart heure_arrivee retard FROM voyage.db WHERE gare_arrivee=${gareA}`
-  res.send(requette);
+  requete = `SELECT id_voyage type gare_depart gare_arrivee heure_depart heure_arrivee retard FROM voyage.db WHERE gare_arrivee=${gareA}`
+  res.send(requete);
 });
-// requette pour recuperer tous les voyage qui part a heure_depart souhaité
+// requete pour recuperer tous les voyage qui part a heure_depart souhaité
 
 app.get('/voyage/heure_depart/:heure_depart', function(req, res) {
-  parametre  = res.params
+  parametre  = req.params
   heureD = parametre.heure_depart
-  requette = `SELECT id_voyage type gare_depart gare_arrivee heure_depart heure_arrivee retard FROM voyage.db WHERE heure_depart=${heureD}`
-  res.send(requette);
+  requete = `SELECT id_voyage type gare_depart gare_arrivee heure_depart heure_arrivee retard FROM voyage.db WHERE heure_depart=${heureD}`
+  res.send(requete);
 });
 
-// requette pour recuperer tous les voyage qui arrive a l'heure_arrivee souhaité
+// requete pour recuperer tous les voyage qui arrive a l'heure_arrivee souhaité
 
 app.get('/voyage/heure_arrivee/:heure_arrivee', function(req, res) {
-  parametre  = res.params
+  parametre  = req.params
   heureA = parametre.heure_arrivee
-  requette = `SELECT id_voyage type gare_depart gare_arrivee heure_depart heure_arrivee retard FROM voyage.db WHERE heure_arrivee=${heureA}`
-  res.send(requette);
+  requete = `SELECT id_voyage type gare_depart gare_arrivee heure_depart heure_arrivee retard FROM voyage.db WHERE heure_arrivee=${heureA}`
+  res.send(requete);
 });
-// requette pour recuperer tous les voyage qui arrive avec retard souhaité
+// requete pour recuperer tous les voyage qui arrive avec retard souhaité
 
 app.get('/voyage/retard/:retard', function(req, res) {
-  parametre  = res.params
+  parametre  = req.params
   retarD = parametre.retard
-  requette = `SELECT id_voyage type gare_depart gare_arrivee heure_depart heure_arrivee retard FROM voyage.db WHERE retard=${retarD}`
-  res.send(requette);
+  requete = `SELECT id_voyage type gare_depart gare_arrivee heure_depart heure_arrivee retard FROM voyage.db WHERE retard=${retarD}`
+  res.send(requete);
 });
 
 
