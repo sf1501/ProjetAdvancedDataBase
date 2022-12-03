@@ -7,7 +7,11 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 
+import { useSetRecoilState } from "recoil";
+import { focusedObjectState } from "../../atoms";
+
 export default function InfoTable({ type, rows }) {
+  const setFocusedObject = useSetRecoilState(focusedObjectState);
   return (
     <>
       <span>{type}</span>
@@ -28,12 +32,14 @@ export default function InfoTable({ type, rows }) {
           <TableBody>
             {rows.map((row, id) => (
               <TableRow
+                hover
                 key={id}
                 sx={{
                   "&:last-child td, &:last-child th": { border: 0 },
                   height: 15,
                   maxHeight: 15,
                 }}
+                onClick={() => setFocusedObject(row.spaceship_number)}
               >
                 <TableCell component="th" scope="row">
                   {row.spaceship_number}

@@ -1,105 +1,25 @@
 import * as THREE from "three";
-import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
-import dayjs from "dayjs";
+import { planetsList } from "./const";
 
-export function orbitLine(radius, y = 0) {
-  let geometry = new THREE.BufferGeometry().setFromPoints(
-    new THREE.Path().absarc(0, 0, radius, 0, Math.PI * 2).getSpacedPoints(5000)
-  );
-
-  let material = new THREE.LineBasicMaterial({ color: "white" });
-
-  let line = new THREE.Line(geometry, material);
-  line.rotation.x = Math.PI / 2;
-
-  return line;
+export function timeStringToSeconds(timeString) {
+  let tab = timeString.split(":");
+  return tab[0] * 3600 + tab[1] * 60 + tab[2];
 }
 
-export function createPlanetarySystem(dataPlanets) {
-  const solarSystem = new THREE.Object3D();
-
-  for (let plt of dataPlanets) {
-    const planetTexture = new THREE.TextureLoader().load(plt.texture_url);
-    const planetMaterial = new THREE.MeshBasicMaterial({
-      map: planetTexture,
+export async function fetchJourneys(setJourneys) {
+  fetch("journeys.json")
+    .then((data) => data.json())
+    .then((journeys) => {
+      journeys.data.forEach((journey) => {
+        if (journey.departure_hour.length === 7) {
+          journey.departure_hour = "0" + journey.departure_hour;
+        }
+        if (journey.arrival_hour.length === 7) {
+          journey.arrival_hour = "0" + journey.arrival_hour;
+        }
+      });
+      setJourneys(journeys.data);
     });
-    const planet = new THREE.Mesh(
-      new THREE.SphereGeometry(1), //size = radius
-      planetMaterial
-    );
-
-    planet.name = plt.name;
-    planet.position.x = plt.position.x;
-    planet.position.y = plt.position.y;
-    planet.position.z = plt.position.z;
-    planet.scale.setScalar(plt.size);
-
-    const planetOrbit = new THREE.Mesh();
-    planetOrbit.add(planet);
-
-    solarSystem.add(planetOrbit);
-  }
-
-  return solarSystem;
-}
-
-export function createPlanetaryOrbits(dataPlanets) {
-  const orbitSystem = new THREE.Object3D();
-
-  for (let plt of dataPlanets) {
-    const circle = orbitLine(plt.position.x);
-    orbitSystem.add(circle);
-  }
-
-  return orbitSystem;
-}
-
-export function createCamera() {
-  return new THREE.PerspectiveCamera(
-    45, // FOV
-    window.innerWidth / window.innerHeight, // Aspect
-    0.5, // near
-    10000000 // far
-  );
-}
-
-export async function createSpaceshipsList(scene) {
-  const loader = new GLTFLoader();
-  let spaceshipObject = new THREE.Group();
-
-  loader.load(
-    "free_spaceship.glb",
-    (gltf) => {
-      spaceshipObject = gltf.scene;
-      spaceshipObject.scale.setScalar(0.2);
-
-      fetch("journeys.json")
-        .then((data) => data.json())
-        .then((journeys) => {
-          journeys = journeys.data;
-
-          console.log(spaceshipObject);
-          // Generate all spaceships 3D objects
-
-          for (let i = 0; i < journeys.length; i++) {
-            const newSpaceship = spaceshipObject.clone();
-            newSpaceship.idJourney = journeys[i].id;
-            newSpaceship.name = journeys[i].spaceship_number;
-            newSpaceship.origin = journeys[i].origin;
-            newSpaceship.destination = journeys[i].destination;
-            newSpaceship.departure_hour = journeys[i].departure_hour;
-            newSpaceship.arrival_hour = journeys[i].arrival_hour;
-            newSpaceship.delay = journeys[i].delay;
-
-            scene.add(newSpaceship);
-          }
-        });
-    },
-    undefined,
-    (error) => {
-      console.error(error);
-    }
-  );
 }
 
 export function doggyCurveTrajectory(spaceship, scene) {
@@ -129,6 +49,133 @@ export function doggyCurveTrajectory(spaceship, scene) {
   }
   // spaceship.mesh.updateMatrixWorld();
   // spaceship.mesh.updateWorldMatrix();
+}
+
+export function progressiveTrajectory(spaceshipName, scene, timer) {
+  const spaceshipObject = scene.getObjectByProperty(
+    "spaceship_number",
+    spaceshipName
+  );
+  let line = scene.getObjectByProperty(
+    "name",
+    spaceshipName + spaceshipObject.origin + spaceshipObject.destination
+  );
+
+  if (spaceshipObject) {
+    const spaceshipVector = new THREE.Vector3();
+
+    const originPlanetObject = scene.getObjectByProperty(
+      "name",
+      planetsList[spaceshipObject.origin]
+    );
+    const destinationPlanetObject = scene.getObjectByProperty(
+      "name",
+      planetsList[spaceshipObject.destination]
+    );
+
+    const originPlanetVector = new THREE.Vector3();
+    const destinationPlanetVector = new THREE.Vector3();
+
+    spaceshipObject.getWorldPosition(spaceshipVector);
+    originPlanetObject.getWorldPosition(originPlanetVector);
+    destinationPlanetObject.getWorldPosition(destinationPlanetVector);
+    const destinationPlanetSpaceshipVector = new THREE.Vector3();
+    const directionVector = new THREE.Vector3();
+
+    destinationPlanetSpaceshipVector.subVectors(
+      destinationPlanetVector,
+      spaceshipVector
+    );
+    directionVector.subVectors(destinationPlanetVector, originPlanetVector);
+
+    if (spaceshipObject.factor > 0.99) {
+      scene.remove(spaceshipObject);
+      scene.remove(line);
+    } else {
+      spaceshipObject.lookAt(destinationPlanetVector);
+
+      const factor =
+        (timeStringToSeconds(timer.format("HH:mm:ss")) -
+          timeStringToSeconds(spaceshipObject.departure_hour) -
+          spaceshipObject.delay) /
+        (timeStringToSeconds(spaceshipObject.arrival_hour) -
+          timeStringToSeconds(spaceshipObject.departure_hour));
+      spaceshipObject.position.x =
+        originPlanetVector.x + directionVector.x * factor;
+      spaceshipObject.position.z =
+        originPlanetVector.z + directionVector.z * factor;
+
+      spaceshipObject.factor = factor;
+      spaceshipObject.updateMatrixWorld();
+      spaceshipObject.updateWorldMatrix();
+
+      computeLine(line, originPlanetVector, destinationPlanetVector);
+    }
+  }
+}
+
+export function computeLine(line, originVector, destinationVector) {
+  const points = [];
+  points.push(originVector);
+  points.push(destinationVector);
+
+  line.geometry.setFromPoints(points);
+  line.computeLineDistances();
+}
+
+export async function fetchDataForPlanet(id) {
+  let dataFetched = await fetch("journeys.json");
+  dataFetched = await dataFetched.json();
+  dataFetched = dataFetched.data;
+
+  dataFetched.forEach((journey) => {
+    journey.origin = planetsList[journey.origin];
+
+    journey.destination = planetsList[journey.destination];
+  });
+  let dataDeparturesFetched = dataFetched
+    .filter((journey) => journey.origin === planetsList[id])
+    .sort(
+      (journeyA, journeyB) =>
+        parseInt(journeyA.departure_hour) - parseInt(journeyB.departure_hour)
+    );
+  let dataArrivalsFetched = dataFetched
+    .filter((journey) => journey.destination === planetsList[id])
+    .sort(
+      (journeyA, journeyB) =>
+        parseInt(journeyA.arrival_hour) - parseInt(journeyB.arrival_hour)
+    );
+
+  return [dataDeparturesFetched, dataArrivalsFetched];
+}
+
+export async function fetchDepartureJourneysByPlanetId(id, setDataDepartures) {
+  let dataFetched = await fetch("journeys.json");
+  dataFetched = await dataFetched.json();
+  dataFetched = dataFetched.data;
+
+  dataFetched.forEach((journey) => {
+    journey.origin = planetsList[journey.origin];
+
+    journey.destination = planetsList[journey.destination];
+  });
+
+  const dataDeparturesFetched = dataFetched
+    .filter((journey) => journey.origin === planetsList[id])
+    .sort(
+      (journeyA, journeyB) =>
+        parseInt(journeyA.departure_hour) - parseInt(journeyB.departure_hour)
+    );
+
+  dataDeparturesFetched.forEach((journey) => {
+    if (journey.departure_hour.length === 7) {
+      journey.departure_hour = "0" + journey.departure_hour;
+    }
+    if (journey.arrival_hour.length === 7) {
+      journey.arrival_hour = "0" + journey.arrival_hour;
+    }
+  });
+  setDataDepartures(dataDeparturesFetched);
 }
 
 // export const zoomOnPlanet = (planetName) => {
