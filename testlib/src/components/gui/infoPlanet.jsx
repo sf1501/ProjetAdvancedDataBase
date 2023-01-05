@@ -1,9 +1,16 @@
-import { memo } from "react";
+import { useQuery } from "react-query";
+import { useRecoilValue } from "recoil";
+import { focusedObjectState } from "../../atoms";
+import { planetsInfo, planetsList } from "../../const";
 import { timeStringToSeconds } from "../../utils";
 import InfoTable from "./table";
 
-const InfoPlanet = memo(function Info({ id }) {
-  const { data: dataDepartures } = useQuery("departures" + id, () =>
+export function InfoTables({ id }) {
+  const {
+    data: dataDepartures,
+    isLoading: isLoadingDepartures,
+    error: errorDepartures,
+  } = useQuery("departures" + id, () =>
     fetch(import.meta.env.VITE_BACKEND + "/voyageByGareDepart/" + id)
       .then((data) => data.json())
       .then((data) =>
@@ -14,21 +21,25 @@ const InfoPlanet = memo(function Info({ id }) {
         )
       )
   );
-  const { data: dataArrivals } = useQuery("arrivals" + id, () =>
-    fetch(import.meta.env.VITE_BACKEND + "/voyageByGareArrivee/" + id)
+  const {
+    data: dataArrivals,
+    isLoading: isLoadingArrivals,
+    error: errorArrivals,
+  } = useQuery("arrivals" + id, () =>
+    fetch(import.meta.env.VITE_BACKEND + "/voyageByGareArrive/" + id)
       .then((data) => data.json())
       .then((data) =>
         data.sort(
           (journeyA, journeyB) =>
-            timeStringToSeconds(journeyA.depart) -
-            timeStringToSeconds(journeyB.depart)
+            timeStringToSeconds(journeyA.arrive) -
+            timeStringToSeconds(journeyB.arrive)
         )
       )
   );
-  
-  if (isLoadingDepartures || isLoadingArrivals) return <div>loading</div>
 
-  if (errorDepartures || errorArrivals) return<div>error</div> 
+  if (isLoadingDepartures || isLoadingArrivals) return <div>loading</div>;
+
+  if (errorDepartures || errorArrivals) return <div>error</div>;
 
   return (
     <div className="infoPlanet">
@@ -36,5 +47,14 @@ const InfoPlanet = memo(function Info({ id }) {
       <InfoTable type={"Arrivals"} rows={dataArrivals} />
     </div>
   );
-});
-export default InfoPlanet;
+}
+
+export function InfoPlanet() {
+  const focusedObject = useRecoilValue(focusedObjectState);
+
+  return (
+    planetsInfo.find((planet) => planet.name === focusedObject) && (
+      <InfoTables id={planetsList.indexOf(focusedObject)} />
+    )
+  );
+}

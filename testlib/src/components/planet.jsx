@@ -1,5 +1,5 @@
-import React, { useRef, useState } from "react";
-import { useFrame, useLoader, useThree } from "@react-three/fiber";
+import { useRef } from "react";
+import { useFrame, useLoader } from "@react-three/fiber";
 import { TextureLoader } from "three/src/loaders/TextureLoader";
 import * as THREE from "three";
 import { PerspectiveCamera } from "@react-three/drei";
@@ -14,7 +14,6 @@ export function Planet({ planetName, size, position, planetRotationSpeed }) {
   // Animation for the rotation of the planet
   useFrame((state, delta) => {
     mesh.current.rotation.y += planetRotationSpeed / 10;
-    // console.log(camera, controls);
   });
   return (
     <mesh

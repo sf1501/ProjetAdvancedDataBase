@@ -1,11 +1,10 @@
 import { OrbitControls, PerspectiveCamera } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
-import { memo } from "react";
-import { MemoSolarSystem, SolarSystem } from "./solarSystem";
+import { SolarSystem } from "./solarSystem";
 
 import * as THREE from "three";
 
-export function MyCanvas({ dataPlanets }) {
+export function MyCanvas() {
   return (
     <Canvas
       onWheel={(event) => {
@@ -23,9 +22,7 @@ export function MyCanvas({ dataPlanets }) {
         aspect={window.innerWidth / window.innerHeight}
       />
       <OrbitControls makeDefault target={new THREE.Vector3(0, 0, 0)} />
-      <SolarSystem dataPlanets={dataPlanets} />
+      <SolarSystem />
     </Canvas>
   );
 }
-
-export const MemoCanvas = memo(MyCanvas);

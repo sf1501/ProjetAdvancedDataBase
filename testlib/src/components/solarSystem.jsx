@@ -1,5 +1,5 @@
 import { useFrame, useLoader, useThree } from "@react-three/fiber";
-import React, { memo, useRef } from "react";
+import { useRef } from "react";
 import { MemoPlanetOrbit } from "./planetOrbit";
 import { TextureLoader } from "three/src/loaders/TextureLoader";
 import { useRecoilValue } from "recoil";
@@ -10,23 +10,28 @@ import { focusedObjectState } from "../atoms";
 import { TrajectoryLine } from "./geometry/trajectoryLine";
 import { PlanetOrbitLine } from "./geometry/planetOrbitLine";
 import { SpaceshipManager } from "./spaceshipManager";
+import { planetsInfo } from "../const";
 
-export function SolarSystem({ dataPlanets }) {
+export function SolarSystem() {
   const mesh = useRef();
   const { scene, controls, gl } = useThree();
   const sceneTexture = useLoader(TextureLoader, "milky_way.jpg");
   scene.background = sceneTexture;
 
-  const { data: journeys } = useQuery(
+  const {
+    data: journeys,
+    isLoading,
+    error,
+  } = useQuery(
     "journeys",
     () =>
-      fetch(process.env.VITE_BACKEND + "/voyages")
-        .then((data) => data.json())
-        .then((data) => data.slice(0, 20)),
+      fetch(import.meta.env.VITE_BACKEND + "/voyage").then((data) =>
+        data.json()
+      ),
     { refetchInterval: 10000 }
   );
   const focusedObject = useRecoilValue(focusedObjectState);
-
+  console.log(focusedObject);
   useFrame((state, delta) => {
     if (focusedObject !== "") {
       const objectFromScene = scene.getObjectByProperty("name", focusedObject);
@@ -46,6 +51,8 @@ export function SolarSystem({ dataPlanets }) {
     }
   });
 
+  if (error || isLoading) return <mesh></mesh>;
+
   return (
     <mesh ref={mesh}>
       {journeys.map((journey, index) => (
@@ -59,7 +66,7 @@ export function SolarSystem({ dataPlanets }) {
           spaceshipDestination={journey.gare_arrive}
         />
       ))}
-      {dataPlanets.map((planet, index) => {
+      {planetsInfo.map((planet, index) => {
         return (
           <MemoPlanetOrbit
             key={index}
@@ -70,11 +77,9 @@ export function SolarSystem({ dataPlanets }) {
           />
         );
       })}
-      {dataPlanets.map((planet, index) => {
+      {planetsInfo.map((planet, index) => {
         return <PlanetOrbitLine key={index} radius={planet.position} />;
       })}
     </mesh>
   );
 }
-
-export const MemoSolarSystem = memo(SolarSystem);

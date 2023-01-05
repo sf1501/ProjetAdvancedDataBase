@@ -1,9 +1,13 @@
 import React from "react";
+import { useSetRecoilState } from "recoil";
+import { focusedObjectState } from "../../atoms";
+import { planetsInfo } from "../../const";
 
-export function PlanetList({ dataPlanets, setFocusedObject }) {
+export function PlanetList() {
+  const setFocusedObject = useSetRecoilState(focusedObjectState);
   return (
     <div className="planetList">
-      {dataPlanets.map((planet, key) => (
+      {planetsInfo.map((planet, key) => (
         <span
           key={key}
           className="item"

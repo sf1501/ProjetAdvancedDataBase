@@ -1,17 +1,19 @@
 import { useFrame, useThree } from "@react-three/fiber";
 import dayjs from "dayjs";
-import { useRecoilValue } from "recoil";
 
-import { timerState } from "../atoms";
 import { progressiveTrajectory, timerToSeconds } from "../utils";
 import { MemoModel } from "./spaceship";
 
 export function SpaceshipManager({ journey }) {
   const { scene } = useThree();
-  const timer = useRecoilValue(timerState);
 
   useFrame((state) => {
     const dayjsDepartureHour = dayjs(journey.depart, "HH:mm:ss");
+    const timer = dayjs()
+      .hour(12)
+      .minute(0)
+      .second(0)
+      .add(state.clock.elapsedTime * 100);
     if (timerToSeconds(dayjsDepartureHour) < timerToSeconds(timer)) {
       progressiveTrajectory(journey.nom_voyage, scene, timer);
     }
