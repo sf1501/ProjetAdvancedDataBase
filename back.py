@@ -1,9 +1,11 @@
 import socket
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
 import json
 app = FastAPI()
 
-##pour lancer le serveur : uvicorn backend:app --reload
+##pour lancer le serveur : uvicorn back:app --reload
 
 def parse(data):
     # Load the JSON string
@@ -25,6 +27,18 @@ def parse(data):
     print(parsed_data)
     return parsed_data
 
+origins = [
+    "*"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 @app.get("/")
 def get_data():
 
@@ -38,11 +52,65 @@ def get_data():
         print(f"server Received from DB {results!r}")
         return parse(data)
 
-#     string = "SELECT infos1 infos2 infos3 FROM voyage.db JOIN train.db gare.db ON depart=id_train id_train=id_gare                WHERE condi1=1 OR condi2=1 OR condi3=1"
-#     string2 = "INSERT id_voyage=5 nom_voyage=lol type=1 depart=1 arrive=1 voie=9 id_train=2 TO voyage.db"
-#     string3 = "UPDATE voyage.db SET column1=value1 column2=value2 WHERE id=1"
-#     string4 = "DELETE FROM voyage.db WHERE column3=1"
-#     send(string)
-#     send(string2)
-#     send(string3)
-#     send(string4)
+@app.get("/train/")
+def get_data():
+
+    HOST = "127.0.0.1"  # The server's hostname or IP address
+    PORT = 65432  # The port used by the server
+    results = b''
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s2:
+        s2.connect((HOST, PORT))
+        s2.sendall("SELECT id_train name capacite id_voyage FROM train.db WHERE capacite>0".encode('UTF-8'))
+        data = s2.recv(1024)
+        print(f"server Received from DB {results!r}")
+        return parse(data)
+
+@app.get("/train/")
+def get_train():
+
+    HOST = "127.0.0.1"  # The server's hostname or IP address
+    PORT = 65432  # The port used by the server
+    results = b''
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s2:
+        s2.connect((HOST, PORT))
+        s2.sendall("SELECT id_train name capacite id_voyage FROM train.db WHERE capacite>0".encode('UTF-8'))
+        data = s2.recv(1024)
+        print(f"server Received from DB {results!r}")
+        return parse(data)
+
+@app.get("/train/{idTrain}")
+def get_train(id_train: int):
+    HOST = "127.0.0.1"  # The server's hostname or IP address
+    PORT = 65432  # The port used by the server
+    id_train_str = str(id_train)  # Convert the value of id_train to a string
+    statement = f"SELECT id_train name capacite id_voyage FROM train.db WHERE id_train={id_train_str}"  # Construct the SELECT statement
+    statement_bytes = statement.encode('UTF-8')  # Encode the statement as a UTF-8 byte string
+
+    # Create a socket and connect to the server
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s2:
+        s2.connect((HOST, PORT))
+        s2.sendall(statement_bytes) # Send the SELECT statement to the server
+
+        # Receive data from the server
+        # Use a buffer to avoid creating a new string for each chunk of data
+        buffer = bytearray(1024)
+        results = []
+        while True:
+            # Receive data into the buffer
+            nbytes = s2.recv_into(buffer)
+            if nbytes == 0:
+                # No more data to receive, break out of the loop
+                break
+            # Append the received data to the results list
+            results.append(buffer[:nbytes])
+        # Concatenate the chunks of data into a single bytes object
+        results_bytes = b''.join(results)
+
+        # Decode the results from UTF-8
+        results_str = results_bytes.decode('UTF-8')
+
+        # Print the received data
+        print(f"server Received from DB {results_str!r}")
+
+        # Return the parsed data
+        return parse(results_str)
