@@ -1,9 +1,10 @@
 import { useFrame, useThree } from "@react-three/fiber";
 import dayjs from "dayjs";
 import { useRecoilValue } from "recoil";
+
 import { timerState } from "../atoms";
 import { progressiveTrajectory, timerToSeconds } from "../utils";
-import { MemoModel, Model } from "./spaceship";
+import { MemoModel } from "./spaceship";
 
 export function SpaceshipManager({ journey }) {
   const { scene } = useThree();
