@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
-import { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
 
 
 export default function Edit(props) {
@@ -10,8 +10,6 @@ export default function Edit(props) {
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-
-  console.log("Salut",props.row)
 
   const planets = [
     { value: 'Mercure', label: 'Mercure' },
@@ -24,19 +22,41 @@ export default function Edit(props) {
     { value: 'Neptune', label: 'Neptune' }
   ];
 
-  const [title, setTitle] = useState('');
+  // const [title, setTitle] = useState('');
+  const [name, setName] = useState('');
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({defaultValues: {
+      // firstName: props.row.name,
+      firstName: props.row.name,
+      lastName: '',
+  },}
+  );
 
+
+  // React.useEffect(() => {
+  //   async function fetchData() {
+  //     const response = await fetch('https://jsonplaceholder.typicode.com/posts');
+  //     const data = await response.json();
+  //     setTitle(data[0].title); // update state with title from first API response object
+
+  //   }
+  //   fetchData();
+  // }, []);
 
   React.useEffect(() => {
     async function fetchData() {
-      const response = await fetch('https://jsonplaceholder.typicode.com/posts');
+      const response = await fetch('http://127.0.0.1:8000/');
       const data = await response.json();
-      setTitle(data[0].title); // update state with title from first API response object
+      setName(data[0].name); // update state with title from first API response object
     }
     fetchData();
   }, []);
   
-  
+
+
   return (
 
     <>
@@ -49,16 +69,33 @@ export default function Edit(props) {
           <Modal.Title>Edit trains schedule</Modal.Title>
         </Modal.Header>
         <Modal.Body>
+
+
+        <form onSubmit={handleSubmit((data) => console.log(data))}>
+          <p>firstName</p>
+          <input {...register('firstName')} 
+          
+          // placeholder={title}
+          />
+
+          <p>lastName</p>
+          <input {...register('lastName', { required: true })} />
+          {errors.lastName && <p>Last name is required.</p>}
+          <p>Age</p>
+          <input {...register('age', { pattern: /\d+/ })} />
+          {errors.age && <p>Please enter number for age.</p>}
+          <input type="submit" />
+        </form>
           <Form>
             <Form.Group className="mb-3" controlId="editForm.ControlInputName">
               <Form.Label>Name</Form.Label>
               <Form.Control
                 type="name"
-                value={name}
-                onChange={(event) => setName(event.target.value)}
+                // value={name}
+                defaultValue={name}
+                // defaultValue={title}
                 // value={props.row.name}
                 // onChange={(event) => setName(event.target.value)}
-                placeholder={title}
                 // placeholder={props.row.name}
               />
             </Form.Group>
@@ -125,6 +162,7 @@ export default function Edit(props) {
             Save Changes
           </Button>
         </Modal.Footer>
+
       </Modal>
     </>
   );

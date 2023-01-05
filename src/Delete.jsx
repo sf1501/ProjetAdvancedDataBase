@@ -9,6 +9,13 @@ export default function Delete() {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
+  const deleteData = async () => {
+    const response = await fetch('https://jsonplaceholder.typicode.com/posts/1', {
+      method: 'DELETE'
+    });
+    const data = await response.json();
+    console.log(data);
+  }
 
   return (
     <>
@@ -36,9 +43,13 @@ export default function Delete() {
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          <Button variant="danger" onClick={handleClose}>
+          <Button variant="danger" onClick={deleteData}>
             Delete
           </Button>
+          {/* <Button variant="danger" 
+          onClick = {() => {handleClose,deleteData}}>
+            Delete
+          </Button> */}
         </Modal.Footer>
       </Modal>
     </>
