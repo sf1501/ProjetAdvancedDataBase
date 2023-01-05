@@ -217,13 +217,13 @@ def voyageByHeureArrivee(arrive: str):
         return parse(data)
 
 class Voyage(BaseModel):
-    id_voyage:int
+    id_voyage: str
     nom_voyage:str
     type:str
     depart:str
     arrive:str
     voie:str
-    id_train:int
+    id_train:str
     gare_depart:str
     gare_arrive:str
 
@@ -240,3 +240,5 @@ async def create_voyage(voyage: Voyage):
         # Receive data from the server
         data = s2.recv(1024)
         print(f"server Received from DB {data!r}")
+
+    return voyage
