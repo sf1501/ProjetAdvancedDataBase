@@ -4,7 +4,7 @@ import InfoTable from "./table";
 
 const InfoPlanet = memo(function Info({ id }) {
   const { data: dataDepartures } = useQuery("departures" + id, () =>
-    fetch(process.env.VITE_BACKEND + "/voyageByGareDepart/" + id)
+    fetch(import.meta.env.VITE_BACKEND + "/voyageByGareDepart/" + id)
       .then((data) => data.json())
       .then((data) =>
         data.sort(
@@ -15,7 +15,7 @@ const InfoPlanet = memo(function Info({ id }) {
       )
   );
   const { data: dataArrivals } = useQuery("arrivals" + id, () =>
-    fetch(process.env.VITE_BACKEND + "/voyageByGareArrivee/" + id)
+    fetch(import.meta.env.VITE_BACKEND + "/voyageByGareArrivee/" + id)
       .then((data) => data.json())
       .then((data) =>
         data.sort(
@@ -25,6 +25,10 @@ const InfoPlanet = memo(function Info({ id }) {
         )
       )
   );
+  
+  if (isLoadingDepartures || isLoadingArrivals) return <div>loading</div>
+
+  if (errorDepartures || errorArrivals) return<div>error</div> 
 
   return (
     <div className="infoPlanet">
