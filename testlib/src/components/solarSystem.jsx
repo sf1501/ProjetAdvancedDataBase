@@ -17,14 +17,10 @@ export function SolarSystem({ dataPlanets }) {
   const sceneTexture = useLoader(TextureLoader, "milky_way.jpg");
   scene.background = sceneTexture;
 
-  const {
-    isLoading,
-    error,
-    data: journeys,
-  } = useQuery("journeys", () =>
-    fetch("journeys.json")
+  const { data: journeys } = useQuery("journeys", () =>
+    fetch("localhost:3000/voyages")
       .then((data) => data.json())
-      .then((data) => data.data.slice(0, 20))
+      .then((data) => data.slice(0, 20))
   );
   const focusedObject = useRecoilValue(focusedObjectState);
 

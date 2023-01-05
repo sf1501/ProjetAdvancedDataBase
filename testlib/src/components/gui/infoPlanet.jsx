@@ -1,37 +1,30 @@
-import { useEffect, memo, useState } from "react";
+import { memo } from "react";
 import { timeStringToSeconds } from "../../utils";
 import InfoTable from "./table";
 
-const InfoPlanet = memo(function InfoPlanet({ id }) {
-  const [dataDepartures, setDataDepartures] = useState([]);
-  const [dataArrivals, setDataArrivales] = useState([]);
-
-  useEffect(() => {
-    async function fetchData() {
-      let dataFetched = await fetch("journeys.json");
-      dataFetched = await dataFetched.json();
-      dataFetched = dataFetched.data;
-
-      let dataDeparturesFetched = dataFetched
-        .filter((journey) => journey.origin === id)
-        .sort(
+const InfoPlanet = memo(function Info({ id }) {
+  const { data: dataDepartures } = useQuery("departures" + id, () =>
+    fetch("localhost:3000/voyageByGareDepart/" + id)
+      .then((data) => data.json())
+      .then((data) =>
+        data.sort(
           (journeyA, journeyB) =>
             timeStringToSeconds(journeyA.departure_hour) -
             timeStringToSeconds(journeyB.departure_hour)
-        );
-      let dataArrivalsFetched = dataFetched
-        .filter((journey) => journey.destination === id)
-        .sort(
+        )
+      )
+  );
+  const { data: dataArrivals } = useQuery("arrivals" + id, () =>
+    fetch("localhost:3000/voyageByGareArrivee/" + id)
+      .then((data) => data.json())
+      .then((data) =>
+        data.sort(
           (journeyA, journeyB) =>
-            timeStringToSeconds(journeyA.arrival_hour) -
-            timeStringToSeconds(journeyB.arrival_hour)
-        );
-
-      setDataDepartures(dataDeparturesFetched);
-      setDataArrivales(dataArrivalsFetched);
-    }
-    fetchData();
-  }, [id]);
+            timeStringToSeconds(journeyA.departure_hour) -
+            timeStringToSeconds(journeyB.departure_hour)
+        )
+      )
+  );
 
   return (
     <div className="infoPlanet">
