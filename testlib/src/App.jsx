@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { useRecoilState } from "recoil";
 import { focusedObjectState, timerState } from "./atoms";
+import { QueryClient, QueryClientProvider } from "react-query";
 
 import { MemoCanvas } from "./components/canvas";
 import { DisplayFocusedObject } from "./components/gui/displayFocusedObject";
@@ -22,6 +23,8 @@ export default function App() {
 
   const [timer, setTimer] = useRecoilState(timerState);
 
+  const queryClient = new QueryClient();
+
   useEffect(() => {
     setDataPlanets(planetsInfo);
 
@@ -33,20 +36,22 @@ export default function App() {
   }, [setTimer]);
 
   return (
-    <ThemeProvider theme={darkTheme}>
-      <CssBaseline />
-      <div style={{ width: "100vw", height: "100vh" }}>
-        {dataPlanets.find((planet) => planet.name === focusedObject) ? (
-          <InfoPlanet id={planetsList.indexOf(focusedObject)} />
-        ) : null}
-        <DisplayFocusedObject focusedObject={focusedObject} />
-        <RightPanel
-          timer={timer}
-          dataPlanets={dataPlanets}
-          setFocusedObject={setFocusedObject}
-        />
-        <MemoCanvas dataPlanets={dataPlanets} />
-      </div>
-    </ThemeProvider>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider theme={darkTheme}>
+        <CssBaseline />
+        <div style={{ width: "100vw", height: "100vh" }}>
+          {dataPlanets.find((planet) => planet.name === focusedObject) ? (
+            <InfoPlanet id={planetsList.indexOf(focusedObject)} />
+          ) : null}
+          <DisplayFocusedObject focusedObject={focusedObject} />
+          <RightPanel
+            timer={timer}
+            dataPlanets={dataPlanets}
+            setFocusedObject={setFocusedObject}
+          />
+          <MemoCanvas dataPlanets={dataPlanets} />
+        </div>
+      </ThemeProvider>
+    </QueryClientProvider>
   );
 }

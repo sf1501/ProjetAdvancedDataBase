@@ -10,32 +10,10 @@ export function timeStringToSeconds(timeString) {
   return tab[0] * 3600 + tab[1] * 60 + tab[2];
 }
 
-export async function fetchJourneys(setJourneys) {
-  fetch("journeys.json")
-    .then((data) => data.json())
-    .then((journeys) => {
-      journeys.data.forEach((journey) => {
-        if (journey.departure_hour.length === 7) {
-          journey.departure_hour = "0" + journey.departure_hour;
-        }
-        if (journey.arrival_hour.length === 7) {
-          journey.arrival_hour = "0" + journey.arrival_hour;
-        }
-      });
-      setJourneys(journeys.data);
-    });
-}
-
 export function computeLine(line, originVector, destinationVector) {
   const points = [];
   points.push(originVector);
   points.push(destinationVector);
-  // const randomAngle = Math.random() * 2 * Math.PI;
-  // planet.name = plt.name;
-  // planet.position.x = plt.position * Math.sin(randomAngle);
-  // planet.position.y = 0;
-  // planet.position.z = plt.position * Math.cos(randomAngle);
-  // planet.scale.setScalar(plt.size * 50);
 
   line.geometry.setFromPoints(points);
   line.computeLineDistances();
@@ -85,43 +63,6 @@ export async function fetchDepartureJourneysByPlanetId(id, setDataDepartures) {
         parseInt(journeyA.departure_hour) - parseInt(journeyB.departure_hour)
     );
   setDataDepartures(dataDeparturesFetched);
-}
-export async function createSpaceshipsList(scene) {
-  const loader = new GLTFLoader();
-  let spaceshipObject = new THREE.Group();
-
-  loader.load(
-    "free_spaceship.glb",
-    (gltf) => {
-      spaceshipObject = gltf.scene;
-      spaceshipObject.scale.setScalar(10);
-
-      fetch("journeys.json")
-        .then((data) => data.json())
-        .then((journeys) => {
-          journeys = journeys.data;
-
-          // Generate all spaceships 3D objects
-          for (let i = 0; i < journeys.length - 99; i++) {
-            const newSpaceship = spaceshipObject.clone();
-
-            newSpaceship.idJourney = journeys[i].id;
-            newSpaceship.name = journeys[i].spaceship_number;
-            newSpaceship.origin = journeys[i].origin;
-            newSpaceship.destination = journeys[i].destination;
-            newSpaceship.departure_hour = journeys[i].departure_hour;
-            newSpaceship.arrival_hour = journeys[i].arrival_hour;
-            newSpaceship.delay = journeys[i].delay;
-            newSpaceship.factor = 0;
-            scene.add(newSpaceship);
-          }
-        });
-    },
-    undefined,
-    (error) => {
-      console.error(error);
-    }
-  );
 }
 
 export function timerToSeconds(timer) {

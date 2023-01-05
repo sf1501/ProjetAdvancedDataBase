@@ -6,12 +6,11 @@ source: https://sketchfab.com/3d-models/free-spaceship-891bb91d22ac4115a8e3c423e
 title: Free Spaceship
 */
 
-import React from "react";
+import React, { memo } from "react";
 import { PerspectiveCamera, useGLTF } from "@react-three/drei";
 
 export function Model(props) {
   const { nodes, materials } = useGLTF("/free_spaceship.glb");
-  console.log("rerender model");
   return (
     <group {...props} dispose={null} scale={20}>
       <group rotation={[-Math.PI / 2, 0, 0]}>
@@ -42,5 +41,6 @@ export function Model(props) {
     </group>
   );
 }
+export const MemoModel = memo(Model);
 
 useGLTF.preload("/free_spaceship.glb");

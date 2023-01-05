@@ -12,15 +12,6 @@ const InfoPlanet = memo(function InfoPlanet({ id }) {
       dataFetched = await dataFetched.json();
       dataFetched = dataFetched.data;
 
-      dataFetched.forEach((journey) => {
-        if (journey.departure_hour.length === 7) {
-          journey.departure_hour = "0" + journey.departure_hour;
-        }
-        if (journey.arrival_hour.length === 7) {
-          journey.arrival_hour = "0" + journey.arrival_hour;
-        }
-      });
-
       let dataDeparturesFetched = dataFetched
         .filter((journey) => journey.origin === id)
         .sort(
