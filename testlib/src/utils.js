@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import dayjs from "dayjs";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import { planetsList } from "./const";
 dayjs.extend(customParseFormat);
@@ -25,69 +26,69 @@ export async function fetchJourneys(setJourneys) {
     });
 }
 
-export function progressiveTrajectory(spaceshipName, scene, timer) {
-  const spaceshipObject = scene.getObjectByProperty(
-    "spaceship_number",
-    spaceshipName
-  );
-  let line = scene.getObjectByProperty(
-    "name",
-    spaceshipName + spaceshipObject.origin + spaceshipObject.destination
-  );
+// export function progressiveTrajectory(spaceshipName, scene, timer) {
+//   const spaceshipObject = scene.getObjectByProperty(
+//     "spaceship_number",
+//     spaceshipName
+//   );
+//   let line = scene.getObjectByProperty(
+//     "name",
+//     spaceshipName + spaceshipObject.origin + spaceshipObject.destination
+//   );
 
-  if (spaceshipObject) {
-    const spaceshipVector = new THREE.Vector3();
+//   if (spaceshipObject) {
+//     const spaceshipVector = new THREE.Vector3();
 
-    const originPlanetObject = scene.getObjectByProperty(
-      "name",
-      planetsList[spaceshipObject.origin]
-    );
-    const destinationPlanetObject = scene.getObjectByProperty(
-      "name",
-      planetsList[spaceshipObject.destination]
-    );
+//     const originPlanetObject = scene.getObjectByProperty(
+//       "name",
+//       planetsList[spaceshipObject.origin]
+//     );
+//     const destinationPlanetObject = scene.getObjectByProperty(
+//       "name",
+//       planetsList[spaceshipObject.destination]
+//     );
 
-    const originPlanetVector = new THREE.Vector3();
-    const destinationPlanetVector = new THREE.Vector3();
+//     const originPlanetVector = new THREE.Vector3();
+//     const destinationPlanetVector = new THREE.Vector3();
 
-    spaceshipObject.getWorldPosition(spaceshipVector);
-    originPlanetObject.getWorldPosition(originPlanetVector);
-    destinationPlanetObject.getWorldPosition(destinationPlanetVector);
+//     spaceshipObject.getWorldPosition(spaceshipVector);
+//     originPlanetObject.getWorldPosition(originPlanetVector);
+//     destinationPlanetObject.getWorldPosition(destinationPlanetVector);
 
-    const destinationPlanetSpaceshipVector = new THREE.Vector3();
-    const directionVector = new THREE.Vector3();
+//     const destinationPlanetSpaceshipVector = new THREE.Vector3();
+//     const directionVector = new THREE.Vector3();
 
-    destinationPlanetSpaceshipVector.subVectors(
-      destinationPlanetVector,
-      spaceshipVector
-    );
-    directionVector.subVectors(destinationPlanetVector, originPlanetVector);
+//     destinationPlanetSpaceshipVector.subVectors(
+//       destinationPlanetVector,
+//       spaceshipVector
+//     );
+//     directionVector.subVectors(destinationPlanetVector, originPlanetVector);
 
-    if (spaceshipObject.factor > 0.99) {
-      scene.remove(spaceshipObject);
-      scene.remove(line);
-    } else {
-      spaceshipObject.lookAt(destinationPlanetVector);
+//     if (spaceshipObject.factor > 0.99) {
+//       scene.remove(spaceshipObject);
+//       scene.remove(line);
+//     } else {
+//       spaceshipObject.lookAt(destinationPlanetVector);
 
-      const factor =
-        (timeStringToSeconds(timer.format("HH:mm:ss")) -
-          timeStringToSeconds(spaceshipObject.departure_hour) -
-          spaceshipObject.delay) /
-        (timeStringToSeconds(spaceshipObject.arrival_hour) -
-          timeStringToSeconds(spaceshipObject.departure_hour));
-      spaceshipObject.position.x =
-        originPlanetVector.x + directionVector.x * factor;
-      spaceshipObject.position.z =
-        originPlanetVector.z + directionVector.z * factor;
+//       const factor =
+//         (timeStringToSeconds(timer.format("HH:mm:ss")) -
+//           timeStringToSeconds(spaceshipObject.departure_hour) -
+//           spaceshipObject.delay) /
+//         (timeStringToSeconds(spaceshipObject.arrival_hour) -
+//           timeStringToSeconds(spaceshipObject.departure_hour));
+//       spaceshipObject.position.x =
+//         originPlanetVector.x + directionVector.x * factor;
+//       spaceshipObject.position.z =
+//         originPlanetVector.z + directionVector.z * factor;
 
-      spaceshipObject.factor = factor;
-      spaceshipObject.updateMatrixWorld();
-      spaceshipObject.updateWorldMatrix();
+//       spaceshipObject.factor = factor;
+//       spaceshipObject.updateMatrixWorld();
+//       spaceshipObject.updateWorldMatrix();
 
-      computeLine(line, originPlanetVector, destinationPlanetVector);
-    }
-  }
-}
+//       computeLine(line, originPlanetVector, destinationPlanetVector);
+//     }
+//   }
+// }
 
 export function computeLine(line, originVector, destinationVector) {
   const points = [];
@@ -147,6 +148,7 @@ export async function fetchDepartureJourneysByPlanetId(id, setDataDepartures) {
       (journeyA, journeyB) =>
         parseInt(journeyA.departure_hour) - parseInt(journeyB.departure_hour)
     );
+  setDataDepartures(dataDeparturesFetched);
 }
 export async function createSpaceshipsList(scene) {
   const loader = new GLTFLoader();
@@ -184,7 +186,6 @@ export async function createSpaceshipsList(scene) {
       console.error(error);
     }
   );
-  setDataDepartures(dataDeparturesFetched);
 }
 
 export function timerToSeconds(timer) {
@@ -304,15 +305,6 @@ export function progressiveTrajectory(spaceshipName, scene, timer) {
 //       0
 //     );
 // };
-
-export function computeLine(line, originVector, destinationVector) {
-  const points = [];
-  points.push(originVector);
-  points.push(destinationVector);
-
-  line.geometry.setFromPoints(points);
-  line.computeLineDistances();
-}
 
 // function onDocumentMouseDown() {
 // //On mouse down, creates a spaceship and pushes it in the list
