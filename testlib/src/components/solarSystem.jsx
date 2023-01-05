@@ -20,7 +20,7 @@ export function SolarSystem({ dataPlanets }) {
   const { data: journeys } = useQuery(
     "journeys",
     () =>
-      fetch("localhost:3000/voyages")
+      fetch(process.env.VITE_BACKEND + "/voyages")
         .then((data) => data.json())
         .then((data) => data.slice(0, 20)),
     { refetchInterval: 10000 }
@@ -54,9 +54,9 @@ export function SolarSystem({ dataPlanets }) {
       {journeys.map((journey, index) => (
         <TrajectoryLine
           key={index}
-          spaceshipName={journey.spaceship_number}
-          spaceshipOrigin={journey.origin}
-          spaceshipDestination={journey.destination}
+          spaceshipName={journey.nom_voyage}
+          spaceshipOrigin={journey.gare_depart}
+          spaceshipDestination={journey.gare_arrive}
         />
       ))}
       {dataPlanets.map((planet, index) => {

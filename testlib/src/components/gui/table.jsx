@@ -21,12 +21,12 @@ export default function InfoTable({ type, rows }) {
             <TableRow>
               <TableCell>Spaceship number</TableCell>
               <TableCell align="right">
-                {type === "Departures" ? "Destination" : "Origin"}
+                {type === "Departures" ? "gare_arrive" : "Origin"}
               </TableCell>
               <TableCell align="right">
                 {type === "Departures" ? "Departure hour" : "Arrival hour"}
               </TableCell>
-              <TableCell align="right">Delay</TableCell>
+              <TableCell align="right">delai</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -39,20 +39,18 @@ export default function InfoTable({ type, rows }) {
                   height: 15,
                   maxHeight: 15,
                 }}
-                onClick={() => setFocusedObject(row.spaceship_number)}
+                onClick={() => setFocusedObject(row.nom_voyage)}
               >
                 <TableCell component="th" scope="row">
-                  {row.spaceship_number}
+                  {row.nom_voyage}
                 </TableCell>
                 <TableCell align="right">
-                  {type === "Departures" ? row.destination : row.origin}
+                  {type === "Departures" ? row.gare_arrive : row.gare_depart}
                 </TableCell>
                 <TableCell align="right">
-                  {type === "Departures"
-                    ? row.departure_hour
-                    : row.arrival_hour}
+                  {type === "Departures" ? row.depart : row.arrive}
                 </TableCell>
-                <TableCell align="right">{row.delay}</TableCell>
+                <TableCell align="right">{row.delai}</TableCell>
               </TableRow>
             ))}
           </TableBody>

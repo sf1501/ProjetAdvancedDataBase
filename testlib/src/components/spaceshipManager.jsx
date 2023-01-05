@@ -11,22 +11,22 @@ export function SpaceshipManager({ journey }) {
   const timer = useRecoilValue(timerState);
 
   useFrame((state) => {
-    const dayjsDepartureHour = dayjs(journey.departure_hour, "HH:mm:ss");
+    const dayjsDepartureHour = dayjs(journey.depart, "HH:mm:ss");
     if (timerToSeconds(dayjsDepartureHour) < timerToSeconds(timer)) {
-      progressiveTrajectory(journey.spaceship_number, scene, timer);
+      progressiveTrajectory(journey.nom_voyage, scene, timer);
     }
   });
 
   return (
     <MemoModel
       idJourney={journey.id}
-      name={journey.spaceship_number}
-      spaceship_number={journey.spaceship_number}
-      origin={journey.origin}
-      destination={journey.destination}
-      departure_hour={journey.departure_hour}
-      arrival_hour={journey.arrival_hour}
-      delay={journey.delay}
+      name={journey.nom_voyage}
+      nom_voyage={journey.nom_voyage}
+      gare_depart={journey.gare_depart}
+      gare_arrive={journey.gare_arrive}
+      depart={journey.depart}
+      arrive={journey.arrive}
+      delai={journey.delai}
     />
   );
 }

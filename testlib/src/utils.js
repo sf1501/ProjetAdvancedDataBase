@@ -27,7 +27,7 @@ export function progressiveTrajectory(spaceshipName, scene, timer) {
   const spaceshipObject = scene.getObjectByProperty("name", spaceshipName);
   let line = scene.getObjectByProperty(
     "name",
-    spaceshipName + spaceshipObject.origin + spaceshipObject.destination
+    spaceshipName + spaceshipObject.gare_depart + spaceshipObject.gare_arrive
   );
 
   if (spaceshipObject) {
@@ -35,11 +35,11 @@ export function progressiveTrajectory(spaceshipName, scene, timer) {
 
     const originPlanetObject = scene.getObjectByProperty(
       "name",
-      planetsList[spaceshipObject.origin]
+      planetsList[spaceshipObject.gare_depart]
     );
     const destinationPlanetObject = scene.getObjectByProperty(
       "name",
-      planetsList[spaceshipObject.destination]
+      planetsList[spaceshipObject.gare_arrive]
     );
 
     const originPlanetVector = new THREE.Vector3();
@@ -64,16 +64,13 @@ export function progressiveTrajectory(spaceshipName, scene, timer) {
     } else {
       spaceshipObject.lookAt(destinationPlanetVector);
 
-      const dayjsDepartureHour = dayjs(
-        spaceshipObject.departure_hour,
-        "HH:mm:ss"
-      );
-      const dayjsArrivalHour = dayjs(spaceshipObject.arrival_hour, "HH:mm:ss");
+      const dayjsDepartureHour = dayjs(spaceshipObject.depart, "HH:mm:ss");
+      const dayjsArrivalHour = dayjs(spaceshipObject.arrive, "HH:mm:ss");
 
       const factor =
         (timerToSeconds(timer) -
           timerToSeconds(dayjsDepartureHour) -
-          spaceshipObject.delay) /
+          spaceshipObject.delai) /
         (timerToSeconds(dayjsArrivalHour) - timerToSeconds(dayjsDepartureHour));
 
       spaceshipObject.position.x =
