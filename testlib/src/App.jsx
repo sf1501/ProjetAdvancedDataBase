@@ -23,20 +23,15 @@ export default function App() {
 
   const [timer, setTimer] = useRecoilState(timerState);
 
-  const queryClient = new QueryClient();
-
   useEffect(() => {
     setDataPlanets(planetsInfo);
-
     const interval = setInterval(() => {
       setTimer((state) => state.add(1, "s"));
     }, 10);
-
     return () => clearInterval(interval);
   }, [setTimer]);
 
   return (
-    <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={darkTheme}>
         <CssBaseline />
         <div style={{ width: "100vw", height: "100vh" }}>
@@ -52,6 +47,10 @@ export default function App() {
           <MemoCanvas dataPlanets={dataPlanets} />
         </div>
       </ThemeProvider>
-    </QueryClientProvider>
   );
+}
+
+export function QueryApp() {
+  const queryClient = new QueryClient();
+  return <QueryClientProvider client={queryClient}><App/></QueryClientProvider>
 }
