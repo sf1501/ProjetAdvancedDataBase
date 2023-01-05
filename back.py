@@ -242,3 +242,20 @@ async def create_voyage(voyage: Voyage):
         print(f"server Received from DB {data!r}")
 
     return voyage
+
+@app.delete("/voyage/{item_id}")
+async def delete_item(item_id: int):
+    id = str(item_id)
+    statement = f"DELETE FROM voyage.db WHERE id_voyage=1"
+
+    statement_bytes = statement.encode('UTF_8')
+
+    # Create a socket and connect to the server
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s2:
+        s2.connect((HOST, PORT))
+        s2.sendall(statement_bytes) # Send the SELECT statement to the server
+
+        # Receive data from the server
+        data = s2.recv(1024)
+        print(f"server Received from DB {data!r}")
+        return "done"
