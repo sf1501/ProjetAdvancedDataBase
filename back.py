@@ -17,7 +17,7 @@ def parse(data):
     # Create a new list to store the parsed data
     parsed_data = []
     # Iterate over each element in the "id_gare" list
-    for i in range(len(data["id_train"])):
+    for i in range(len(data[next(iter(data))])):
         obj = {}
         # Create a new JSON object with the current values
         for key in data.keys():
@@ -57,19 +57,24 @@ def get_data():
         return parse(data)
 
 @app.get("/train/")
-def get_data():
-    results = b''
+def get_train():
+    statement = f"SELECT id_train name_train capacite voyage FROM train.db"  # Construct the SELECT statement
+    statement_bytes = statement.encode('UTF-8')  # Encode the statement as a UTF-8 byte string
+
+    # Create a socket and connect to the server
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s2:
         s2.connect((HOST, PORT))
-        s2.sendall("SELECT id_train name capacite id_voyage FROM train.db WHERE capacite>0".encode('UTF-8'))
+        s2.sendall(statement_bytes) # Send the SELECT statement to the server
+
+        # Receive data from the server
         data = s2.recv(1024)
-        print(f"server Received from DB {results!r}")
+        print(f"server Received from DB {data!r}")
         return parse(data)
 
 
-@app.get("/train/{idTrain}")
-def get_train(id_train: int):
-    id_train_str = str(id_train)  # Convert the value of id_train to a string
+@app.get("/train/{idTrain}/")
+def get_train(idTrain: int):
+    id_train_str = str(idTrain)  # Convert the value of id_train to a string
     statement = f"SELECT id_train name capacite id_voyage FROM train.db WHERE id_train={id_train_str}"  # Construct the SELECT statement
     statement_bytes = statement.encode('UTF-8')  # Encode the statement as a UTF-8 byte string
 
@@ -79,25 +84,70 @@ def get_train(id_train: int):
         s2.sendall(statement_bytes) # Send the SELECT statement to the server
 
         # Receive data from the server
-        # Use a buffer to avoid creating a new string for each chunk of data
-        buffer = bytearray(1024)
-        results = []
-        while True:
-            # Receive data into the buffer
-            nbytes = s2.recv_into(buffer)
-            if nbytes == 0:
-                # No more data to receive, break out of the loop
-                break
-            # Append the received data to the results list
-            results.append(buffer[:nbytes])
-        # Concatenate the chunks of data into a single bytes object
-        results_bytes = b''.join(results)
+        data = s2.recv(1024)
+        print(f"server Received from DB {data!r}")
+        return parse(data)
 
-        # Decode the results from UTF-8
-        results_str = results_bytes.decode('UTF-8')
+@app.get("/gare/")
+def get_gare():
+    statement = f"SELECT id_gare name nb_voie FROM gare.db"  # Construct the SELECT statement
+    statement_bytes = statement.encode('UTF-8')  # Encode the statement as a UTF-8 byte string
 
-        # Print the received data
-        print(f"server Received from DB {results_str!r}")
+    # Create a socket and connect to the server
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s2:
+        s2.connect((HOST, PORT))
+        s2.sendall(statement_bytes) # Send the SELECT statement to the server
 
-        # Return the parsed data
-        return parse(results_str)
+        # Receive data from the server
+        data = s2.recv(1024)
+        print(f"server Received from DB {data!r}")
+        return parse(data)
+
+
+@app.get("/gare/{idGare}/")
+def get_gare(idGare: int):
+    id_gare_str = str(idGare)  # Convert the value of id_train to a string
+    statement = f"SELECT id_gare name nb_voie FROM gare.db WHERE id_gare={id_gare_str}"  # Construct the SELECT statement
+    statement_bytes = statement.encode('UTF-8')  # Encode the statement as a UTF-8 byte string
+
+    # Create a socket and connect to the server
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s2:
+        s2.connect((HOST, PORT))
+        s2.sendall(statement_bytes) # Send the SELECT statement to the server
+
+        # Receive data from the server
+        data = s2.recv(1024)
+        print(f"server Received from DB {data!r}")
+        return parse(data)
+
+@app.get("/voyage/")
+def get_voyage():
+    statement = f"SELECT id_voyage nom_voyage type depart arrive voie id_train gare_depart gare_arrive FROM voyage.db"  # Construct the SELECT statement
+    statement_bytes = statement.encode('UTF-8')  # Encode the statement as a UTF-8 byte string
+
+    # Create a socket and connect to the server
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s2:
+        s2.connect((HOST, PORT))
+        s2.sendall(statement_bytes) # Send the SELECT statement to the server
+
+        # Receive data from the server
+        data = s2.recv(1024)
+        print(f"server Received from DB {data!r}")
+        return parse(data)
+
+
+@app.get("/voyage/{idVoyage}")
+def get_voyage(idVoyage: int):
+    id_voyage_str = str(idVoyage)  # Convert the value of id_train to a string
+    statement = f"SELECT id_voyage nom_voyage type depart arrive voie id_train gare_depart gare_arrive FROM voyage.db WHERE id_voyage={id_voyage_str}"  # Construct the SELECT statement
+    statement_bytes = statement.encode('UTF-8')  # Encode the statement as a UTF-8 byte string
+
+    # Create a socket and connect to the server
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s2:
+        s2.connect((HOST, PORT))
+        s2.sendall(statement_bytes) # Send the SELECT statement to the server
+
+        # Receive data from the server
+        data = s2.recv(1024)
+        print(f"server Received from DB {data!r}")
+        return parse(data)
