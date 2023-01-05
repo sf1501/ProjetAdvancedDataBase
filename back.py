@@ -1,7 +1,7 @@
 import socket
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
+from pydantic import BaseModel
 import json
 app = FastAPI()
 
@@ -215,3 +215,28 @@ def voyageByHeureArrivee(arrive: str):
         data = s2.recv(1024)
         print(f"server Received from DB {data!r}")
         return parse(data)
+
+class Voyage(BaseModel):
+    id_voyage:int
+    nom_voyage:str
+    type:str
+    depart:str
+    arrive:str
+    voie:str
+    id_train:int
+    gare_depart:str
+    gare_arrive:str
+
+@app.post("/addVoyage/")
+async def create_voyage(voyage: Voyage):
+    statement = f"INSERT id_voyage={voyage.id_voyage} nom_voyage={voyage.nom_voyage} type={voyage.type} depart={voyage.depart} arrive={voyage.arrive} voie={voyage.voie} id_train={voyage.id_train} gare_depart={voyage.gare_depart} gare_arrive={voyage.gare_arrive} TO voyage.db"  # Construct the SELECT statement
+    statement_bytes = statement.encode('UTF-8')  # Encode the statement as a UTF-8 byte string
+
+    # Create a socket and connect to the server
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s2:
+        s2.connect((HOST, PORT))
+        s2.sendall(statement_bytes) # Send the SELECT statement to the server
+
+        # Receive data from the server
+        data = s2.recv(1024)
+        print(f"server Received from DB {data!r}")
