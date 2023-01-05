@@ -1,6 +1,6 @@
 import { useFrame, useLoader, useThree } from "@react-three/fiber";
 import React, { memo, useEffect, useRef, useState } from "react";
-import { PlanetOrbit } from "./planetOrbit";
+import { MemoPlanetOrbit, PlanetOrbit } from "./planetOrbit";
 import { TextureLoader } from "three/src/loaders/TextureLoader";
 
 import { fetchJourneys } from "../utils";
@@ -13,7 +13,7 @@ import { PlanetOrbitLine } from "./geometry/planetOrbitLine";
 
 export function SolarSystem({ dataPlanets }) {
   const mesh = useRef();
-  const { camera, scene, controls } = useThree();
+  const { scene, controls, gl } = useThree();
   const sceneTexture = useLoader(TextureLoader, "milky_way.jpg");
   scene.background = sceneTexture;
 
@@ -30,17 +30,23 @@ export function SolarSystem({ dataPlanets }) {
       if (objectFromScene.isObject3D) {
         const focusedObjectVector = new THREE.Vector3();
         objectFromScene.getWorldPosition(focusedObjectVector);
-
-        let scaleFactor = objectFromScene.name.length > 10 ? 20 : 200;
-
+        // let scaleFactor = objectFromScene.name.length > 10 ? 20 : 200;
+        // controls.target = focusedObjectVector;
+        // camera.position.x =
+        //   focusedObjectVector.x + objectFromScene.scale.x * scaleFactor;
+        // camera.position.y =
+        //   focusedObjectVector.y + objectFromScene.scale.y * scaleFactor;
+        // camera.position.z =
+        //   focusedObjectVector.z + objectFromScene.scale.z * scaleFactor;
+        // controls.update();
+        gl.render(
+          scene,
+          objectFromScene.getObjectByProperty(
+            "name",
+            "camera" + objectFromScene.name
+          )
+        );
         controls.target = focusedObjectVector;
-        camera.position.x =
-          focusedObjectVector.x + objectFromScene.scale.x * scaleFactor;
-        camera.position.y =
-          focusedObjectVector.y + objectFromScene.scale.y * scaleFactor;
-        camera.position.z =
-          focusedObjectVector.z + objectFromScene.scale.z * scaleFactor;
-
         controls.update();
       }
     }
@@ -68,18 +74,11 @@ export function SolarSystem({ dataPlanets }) {
         />
       ))}
       {dataPlanets.map((planet, key) => {
-        let position = [];
-        const randomAngle = Math.random() * 2 * Math.PI;
-        position.push(planet.position * Math.sin(randomAngle));
-        position.push(0);
-        position.push(planet.position * Math.cos(randomAngle));
-
         return (
-          <PlanetOrbit
+          <MemoPlanetOrbit
             key={key}
             planetName={planet.name}
             size={planet.size}
-            position={position}
             orbitRotationSpeed={planet.orbit_rotation_speed}
             planetRotationSpeed={planet.self_rotation_speed}
           />

@@ -1,7 +1,7 @@
 import { OrbitControls, PerspectiveCamera } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import { memo } from "react";
-import { SolarSystem } from "./solarSystem";
+import { MemoSolarSystem, SolarSystem } from "./solarSystem";
 
 import * as THREE from "three";
 

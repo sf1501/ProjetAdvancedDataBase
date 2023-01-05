@@ -22,35 +22,6 @@ export async function fetchJourneys(setJourneys) {
     });
 }
 
-export function doggyCurveTrajectory(spaceship, scene) {
-  //TODO spaceship look at destination planet
-
-  const targetObject = scene.getObjectByProperty("name", spaceship.target);
-  const spaceshipObject = scene.getObjectByProperty("name", spaceship.name);
-
-  const targetVector = new THREE.Vector3();
-  const spaceshipVector = new THREE.Vector3();
-  targetObject.getWorldPosition(targetVector);
-  spaceshipObject.getWorldPosition(spaceshipVector);
-
-  const directionVector = new THREE.Vector3();
-
-  directionVector.subVectors(targetVector, spaceshipVector);
-
-  if (Math.abs(directionVector.x) < 50 && Math.abs(directionVector.z) < 50) {
-    scene.remove(spaceshipObject);
-  }
-  directionVector.normalize();
-
-  if (spaceship) {
-    spaceship.mesh.lookAt(targetVector);
-    spaceship.mesh.position.x += directionVector.x * spaceship.speed;
-    spaceship.mesh.position.z += directionVector.z * spaceship.speed;
-  }
-  // spaceship.mesh.updateMatrixWorld();
-  // spaceship.mesh.updateWorldMatrix();
-}
-
 export function progressiveTrajectory(spaceshipName, scene, timer) {
   const spaceshipObject = scene.getObjectByProperty(
     "spaceship_number",
@@ -79,6 +50,7 @@ export function progressiveTrajectory(spaceshipName, scene, timer) {
     spaceshipObject.getWorldPosition(spaceshipVector);
     originPlanetObject.getWorldPosition(originPlanetVector);
     destinationPlanetObject.getWorldPosition(destinationPlanetVector);
+
     const destinationPlanetSpaceshipVector = new THREE.Vector3();
     const directionVector = new THREE.Vector3();
 
@@ -177,6 +149,35 @@ export async function fetchDepartureJourneysByPlanetId(id, setDataDepartures) {
   });
   setDataDepartures(dataDeparturesFetched);
 }
+
+// export function doggyCurveTrajectory(spaceship, scene) {
+//   //TODO spaceship look at destination planet
+
+//   const targetObject = scene.getObjectByProperty("name", spaceship.target);
+//   const spaceshipObject = scene.getObjectByProperty("name", spaceship.name);
+
+//   const targetVector = new THREE.Vector3();
+//   const spaceshipVector = new THREE.Vector3();
+//   targetObject.getWorldPosition(targetVector);
+//   spaceshipObject.getWorldPosition(spaceshipVector);
+
+//   const directionVector = new THREE.Vector3();
+
+//   directionVector.subVectors(targetVector, spaceshipVector);
+
+//   if (Math.abs(directionVector.x) < 50 && Math.abs(directionVector.z) < 50) {
+//     scene.remove(spaceshipObject);
+//   }
+//   directionVector.normalize();
+
+//   if (spaceship) {
+//     spaceship.mesh.lookAt(targetVector);
+//     spaceship.mesh.position.x += directionVector.x * spaceship.speed;
+//     spaceship.mesh.position.z += directionVector.z * spaceship.speed;
+//   }
+//   // spaceship.mesh.updateMatrixWorld();
+//   // spaceship.mesh.updateWorldMatrix();
+// }
 
 // export const zoomOnPlanet = (planetName) => {
 //   const vector = new THREE.Vector3().setFromMatrixPosition(

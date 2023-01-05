@@ -10,6 +10,7 @@ import {
   progressiveTrajectory,
 } from "../utils";
 import * as THREE from "three";
+import { PerspectiveCamera } from "@react-three/drei";
 
 export function Planet({ planetName, size, position, planetRotationSpeed }) {
   const mesh = useRef();
@@ -17,7 +18,7 @@ export function Planet({ planetName, size, position, planetRotationSpeed }) {
     TextureLoader,
     planetName.toLowerCase() + ".jpg"
   );
-  const { scene } = useThree();
+  const { scene, gl, camera, controls } = useThree();
   const [dataDepartures, setDataDepartures] = useState([]);
   const [travelingSpaceshipsList, setTravelingSpaceshipList] = useState([]);
   const timer = useRecoilValue(timerState);
@@ -48,6 +49,7 @@ export function Planet({ planetName, size, position, planetRotationSpeed }) {
   // Animation for the rotation of the planet
   useFrame((state, delta) => {
     mesh.current.rotation.y += planetRotationSpeed / 10;
+    // console.log(camera, controls);
   });
   return (
     <mesh
@@ -58,6 +60,13 @@ export function Planet({ planetName, size, position, planetRotationSpeed }) {
     >
       <sphereGeometry args={[100]} />
       <meshBasicMaterial map={planetTexture} />
+      <PerspectiveCamera
+        name={"camera" + planetName}
+        fov={45}
+        far={10000000}
+        near={0.5}
+        aspect={window.innerWidth / window.innerHeight}
+      />
     </mesh>
   );
 }

@@ -7,10 +7,11 @@ title: Free Spaceship
 */
 
 import React from "react";
-import { useGLTF } from "@react-three/drei";
+import { PerspectiveCamera, useGLTF } from "@react-three/drei";
 
 export function Model(props) {
   const { nodes, materials } = useGLTF("/free_spaceship.glb");
+  console.log("rerender model");
   return (
     <group {...props} dispose={null} scale={20}>
       <group rotation={[-Math.PI / 2, 0, 0]}>
@@ -29,6 +30,15 @@ export function Model(props) {
           </group>
         </group>
       </group>
+      <PerspectiveCamera
+        name={"camera" + props.name}
+        makeDefault={false}
+        position={props.position}
+        fov={45}
+        far={10000000}
+        near={0.5}
+        aspect={window.innerWidth / window.innerHeight}
+      />
     </group>
   );
 }
