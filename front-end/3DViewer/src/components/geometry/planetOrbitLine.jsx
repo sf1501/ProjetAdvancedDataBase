@@ -14,7 +14,7 @@ export function PlanetOrbitLine({ radius }) {
 
   return (
     <line ref={mesh} geometry={geometry}>
-      <lineBasicMaterial color={"white"} />
+      <lineBasicMaterial color={"yellow"} />
     </line>
   );
 }

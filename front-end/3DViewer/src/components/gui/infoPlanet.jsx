@@ -28,22 +28,26 @@ export function InfoTables({ id }) {
     data: dataArrivals,
     isLoading: isLoadingArrivals,
     error: errorArrivals,
-  } = useQuery("arrivals" + id, () =>
-    fetch(import.meta.env.VITE_BACKEND + "/voyageByGareArrive/" + id)
-      .then((data) => data.json())
-      .then((data) =>
-        data.sort(
-          (journeyA, journeyB) =>
-            timeStringToSeconds(journeyA.arrive) -
-            timeStringToSeconds(journeyB.arrive)
-        )
-      )
+  } = useQuery(
+    "arrivals" + id,
+    () =>
+      fetch(import.meta.env.VITE_BACKEND + "/voyageByGareArrive/" + id)
+        .then((data) => data.json())
+        .then((data) =>
+          data.sort(
+            (journeyA, journeyB) =>
+              timeStringToSeconds(journeyA.arrive) -
+              timeStringToSeconds(journeyB.arrive)
+          )
+        ),
+    { refetchInterval: 5000 }
   );
 
   if (isLoadingDepartures || isLoadingArrivals)
     return <div className="infoPlanet">loading</div>;
 
-  if (errorDepartures || errorArrivals) return <div>error</div>;
+  if (errorDepartures || errorArrivals)
+    return <div className="infoPlanet">error</div>;
 
   return (
     <div className="infoPlanet">
