@@ -12,7 +12,7 @@ export default function DeleteVoyage(props) {
 
   const deleteData = async (data) => {
     try {
-        const endpoint = `http://192.168.151.55:8000/voyage/${props.voyage.id_voyage}`;
+        const endpoint = import.meta.env.VITE_BACKEND + `voyage/${props.voyage.id_voyage}`;
         console.log(endpoint);
         const response = await fetch(endpoint, {
           method: 'DELETE'
