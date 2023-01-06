@@ -1,28 +1,36 @@
 import { useFrame, useLoader, useThree } from "@react-three/fiber";
-import React, { memo, useEffect, useRef, useState } from "react";
-import { MemoPlanetOrbit, PlanetOrbit } from "./planetOrbit";
+import { useRef } from "react";
+import { PlanetOrbit } from "./planetOrbit";
 import { TextureLoader } from "three/src/loaders/TextureLoader";
-
-import { fetchJourneys } from "../utils";
-import { Model } from "./spaceship";
 import { useRecoilValue } from "recoil";
-import { focusedObjectState } from "../atoms";
 import * as THREE from "three";
+import { useQuery } from "react-query";
+
+import { focusedObjectState } from "../atoms";
 import { TrajectoryLine } from "./geometry/trajectoryLine";
 import { PlanetOrbitLine } from "./geometry/planetOrbitLine";
+import { SpaceshipManager } from "./spaceshipManager";
+import { planetsInfo } from "../const";
 
-export function SolarSystem({ dataPlanets }) {
+export function SolarSystem() {
   const mesh = useRef();
   const { scene, controls, gl } = useThree();
   const sceneTexture = useLoader(TextureLoader, "milky_way.jpg");
   scene.background = sceneTexture;
 
-  const [journeys, setJourneys] = useState([]);
+  const {
+    data: journeys,
+    isLoading,
+    error,
+  } = useQuery(
+    "journeys",
+    () =>
+      fetch(import.meta.env.VITE_BACKEND + "/voyage").then((data) =>
+        data.json()
+      ),
+    { refetchInterval: 10000 }
+  );
   const focusedObject = useRecoilValue(focusedObjectState);
-
-  useEffect(() => {
-    fetchJourneys(setJourneys);
-  }, []);
 
   useFrame((state, delta) => {
     if (focusedObject !== "") {
@@ -30,15 +38,6 @@ export function SolarSystem({ dataPlanets }) {
       if (objectFromScene.isObject3D) {
         const focusedObjectVector = new THREE.Vector3();
         objectFromScene.getWorldPosition(focusedObjectVector);
-        // let scaleFactor = objectFromScene.name.length > 10 ? 20 : 200;
-        // controls.target = focusedObjectVector;
-        // camera.position.x =
-        //   focusedObjectVector.x + objectFromScene.scale.x * scaleFactor;
-        // camera.position.y =
-        //   focusedObjectVector.y + objectFromScene.scale.y * scaleFactor;
-        // camera.position.z =
-        //   focusedObjectVector.z + objectFromScene.scale.z * scaleFactor;
-        // controls.update();
         gl.render(
           scene,
           objectFromScene.getObjectByProperty(
@@ -52,43 +51,33 @@ export function SolarSystem({ dataPlanets }) {
     }
   });
 
+  if (error || isLoading) return <mesh></mesh>;
+
   return (
     <mesh ref={mesh}>
-      {journeys.map((journey) => (
-        <Model
-          idJourney={journey.id}
-          name={journey.spaceship_number}
-          spaceship_number={journey.spaceship_number}
-          origin={journey.origin}
-          destination={journey.destination}
-          departure_hour={journey.departure_hour}
-          arrival_hour={journey.arrival_hour}
-          delay={journey.delay}
-        />
+      {journeys.map((journey, index) => (
+        <group>
+          <SpaceshipManager key={index} journey={journey} />
+          <TrajectoryLine
+            key={"line" + index}
+            spaceshipName={journey.nom_voyage}
+            spaceshipOrigin={journey.gare_depart}
+            spaceshipDestination={journey.gare_arrive}
+          />
+        </group>
       ))}
-      {journeys.map((journey) => (
-        <TrajectoryLine
-          spaceshipName={journey.spaceship_number}
-          spaceshipOrigin={journey.origin}
-          spaceshipDestination={journey.destination}
-        />
-      ))}
-      {dataPlanets.map((planet, key) => {
-        return (
-          <MemoPlanetOrbit
-            key={key}
+      {planetsInfo.map((planet, index) => (
+        <group>
+          <PlanetOrbit
+            key={"orbit" + index}
             planetName={planet.name}
             size={planet.size}
             orbitRotationSpeed={planet.orbit_rotation_speed}
             planetRotationSpeed={planet.self_rotation_speed}
           />
-        );
-      })}
-      {dataPlanets.map((planet, key) => {
-        return <PlanetOrbitLine key={key} radius={planet.position} />;
-      })}
+          <PlanetOrbitLine key={"orbitLine" + index} radius={planet.position} />
+        </group>
+      ))}
     </mesh>
   );
 }
-
-export const MemoSolarSystem = memo(SolarSystem);

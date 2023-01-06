@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+
 export const planetsList = [
   "Sun",
   "Earth",
@@ -10,11 +12,13 @@ export const planetsList = [
   "Venus",
 ];
 
+export const timer = dayjs().hour(12).minute(0).second(0);
+
 export const planetsInfo = [
   {
     id: 0,
     name: "Sun",
-    size: 1000,
+    size: 10,
     position: 0,
     orbit_rotation_speed: 0,
     self_rotation_speed: 0.01,

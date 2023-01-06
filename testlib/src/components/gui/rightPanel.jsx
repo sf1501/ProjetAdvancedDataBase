@@ -1,13 +1,11 @@
 import { PlanetList } from "./planetList";
+import { Timer } from "./timer";
 
-export function RightPanel({ dataPlanets, setFocusedObject, timer }) {
+export function RightPanel() {
   return (
     <div className="rightPanel">
-      <span>Timer: {timer.format("HH:mm:ss")}</span>
-      <PlanetList
-        dataPlanets={dataPlanets}
-        setFocusedObject={setFocusedObject}
-      />
+      <Timer />
+      <PlanetList />
     </div>
   );
 }

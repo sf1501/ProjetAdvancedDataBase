@@ -1,14 +1,6 @@
-import React, { useRef, useState } from "react";
-import { useFrame, useLoader, useThree } from "@react-three/fiber";
+import { useRef } from "react";
+import { useFrame, useLoader } from "@react-three/fiber";
 import { TextureLoader } from "three/src/loaders/TextureLoader";
-import { useRecoilValue } from "recoil";
-import { timerState } from "../atoms";
-import { useEffect } from "react";
-import { planetsList } from "../const";
-import {
-  fetchDepartureJourneysByPlanetId,
-  progressiveTrajectory,
-} from "../utils";
 import * as THREE from "three";
 import { PerspectiveCamera } from "@react-three/drei";
 
@@ -18,38 +10,10 @@ export function Planet({ planetName, size, position, planetRotationSpeed }) {
     TextureLoader,
     planetName.toLowerCase() + ".jpg"
   );
-  const { scene, gl, camera, controls } = useThree();
-  const [dataDepartures, setDataDepartures] = useState([]);
-  const [travelingSpaceshipsList, setTravelingSpaceshipList] = useState([]);
-  const timer = useRecoilValue(timerState);
-
-  useEffect(() => {
-    fetchDepartureJourneysByPlanetId(
-      planetsList.indexOf(planetName),
-      setDataDepartures
-    );
-  }, [planetName]);
-
-  // Animation for the spaceships which departed from the planet
-  useFrame((state, delta) => {
-    for (let departure of dataDepartures) {
-      if (timer.format("HH:mm:ss") === departure.departure_hour) {
-        setTravelingSpaceshipList((state) => {
-          let newTab = state;
-          newTab.push(departure.spaceship_number);
-          return newTab;
-        });
-      }
-    }
-    travelingSpaceshipsList.forEach((spaceshipName) =>
-      progressiveTrajectory(spaceshipName, scene, timer)
-    );
-  });
 
   // Animation for the rotation of the planet
   useFrame((state, delta) => {
     mesh.current.rotation.y += planetRotationSpeed / 10;
-    // console.log(camera, controls);
   });
   return (
     <mesh

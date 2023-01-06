@@ -11,8 +11,6 @@ export function PlanetOrbit({
 }) {
   const mesh = useRef();
 
-  console.log("rerender orbit");
-
   // Animation for the rotation of the planet around the Sun
   useFrame(
     (state, delta) => (mesh.current.rotation.y += orbitRotationSpeed / 600)
@@ -39,5 +37,3 @@ export function PlanetOrbit({
     </mesh>
   );
 }
-
-export const MemoPlanetOrbit = memo(PlanetOrbit);
