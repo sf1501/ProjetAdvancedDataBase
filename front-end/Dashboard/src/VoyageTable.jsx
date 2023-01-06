@@ -32,7 +32,7 @@ export default function VoyageTable() {
 
     React.useEffect(() => {
         async function fetchData() {
-        const response = await fetch('http://192.168.151.55:8000/voyage');
+        const response = await fetch(import.meta.env.VITE_BACKEND +'/voyage');
         const data = await response.json();
         console.log(data)
         setVoyages(data);
@@ -45,16 +45,16 @@ export default function VoyageTable() {
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell>id_voyage</TableCell>
-            <TableCell>nom_voyage</TableCell>
-            <TableCell align="right">type</TableCell>
-            <TableCell align="right">depart</TableCell>
-            <TableCell align="right">arrive</TableCell>
-            <TableCell align="right">voie</TableCell>
-            <TableCell align="right">id_train</TableCell>
-            <TableCell align="right">gare_depart</TableCell>
-            <TableCell align="right">gare_arrive</TableCell>
-            <TableCell align="right">delay&nbsp;(min)</TableCell>
+            <TableCell>Id</TableCell>
+            <TableCell>Matricule</TableCell>
+            <TableCell align="center">Type</TableCell>
+            <TableCell align="center">Heure de départ</TableCell>
+            <TableCell align="center">Heure d'arrivée</TableCell>
+            <TableCell align="center">Voie</TableCell>
+            <TableCell align="center">Référence du train</TableCell>
+            <TableCell align="center">Gare de départ</TableCell>
+            <TableCell align="center">Gare d'arrivée</TableCell>
+            <TableCell align="center">Délai&nbsp;(min)</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -62,15 +62,15 @@ export default function VoyageTable() {
             <TableRow key={voyage.id_voyage}>
             <TableCell>{voyage.id_voyage}</TableCell>
             <TableCell>{voyage.nom_voyage}</TableCell>
-            <TableCell align="right">{voyage.type}</TableCell>
-            <TableCell align="right">{voyage.depart}</TableCell>
-            <TableCell align="right">{voyage.arrive}</TableCell>
-            <TableCell align="right">{voyage.voie}</TableCell>
-            <TableCell align="right">{voyage.id_train}</TableCell>
-            <TableCell align="right">{voyage.gare_depart}</TableCell>
-            <TableCell align="right">{voyage.gare_arrive}</TableCell>
-            <TableCell align="right">{voyage.delai}</TableCell>
-            <div style={{display: 'flex', justifyContent: 'space-between', margin: '0 10px'}}>
+            <TableCell align="center">{voyage.type}</TableCell>
+            <TableCell align="center">{voyage.depart}</TableCell>
+            <TableCell align="center">{voyage.arrive}</TableCell>
+            <TableCell align="center">{voyage.voie}</TableCell>
+            <TableCell align="center">{voyage.id_train}</TableCell>
+            <TableCell align="center">{voyage.gare_depart}</TableCell>
+            <TableCell align="center">{voyage.gare_arrive}</TableCell>
+            <TableCell align="center">{voyage.delai}</TableCell>
+            <div style={{display: 'flex', justifyContent: 'space-between', margin: '0 10px',gap:'5px'}}>
                 <EditVoyage voyage={voyage}></EditVoyage>
                 <DeleteVoyage voyage={voyage}></DeleteVoyage>
               </div>

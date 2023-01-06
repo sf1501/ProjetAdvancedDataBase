@@ -26,7 +26,7 @@ export default function AddVoyage() {
 
   const postData = async (data) => {
     try {
-      const response = await fetch('http://192.168.151.55:8000/addVoyage', {
+      const response = await fetch(import.meta.env.VITE_BACKEND +'/addVoyage', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

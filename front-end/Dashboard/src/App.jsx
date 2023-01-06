@@ -1,4 +1,4 @@
-import reactLogo from './assets/react.svg'
+import logo from './assets/logo.png'
 import './App.css'
 import AddVoyage from './AddVoyage';
 import 'bootstrap/dist/css/bootstrap.min.css'; 
@@ -9,14 +9,12 @@ function App() {
 
   return (
     <div className="App">
-      {/* <div>
-        <a href="https://vitejs.dev" target="_blank">
+      <div>
+        {/* <a href="https://vitejs.dev" target="_blank">
           <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div> */}
+        </a> */}
+          <img src={logo} className="logo react" alt="React logo" />
+      </div>
       <h1>Administration des voyages</h1>
       <div className="card">
         <VoyageTable/>

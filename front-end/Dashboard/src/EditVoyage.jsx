@@ -7,15 +7,6 @@ import { useForm } from 'react-hook-form';
 
 export default function EditVoyage(props) {
   const [show, setShow] = useState(false);
-  // const [nom_voyage, setNomVoyage] = useState(props.voyage.nom_voyage);
-  // const [type, setType] = useState(props.voyage.type);
-  // const [depart, setDepart] = useState(props.voyage.depart);
-  // const [arrive, setArrive] = useState(props.voyage.arrive);
-  // const [voie, setVoie] = useState(props.voyage.voie);
-  // const [id_train, setIdTrain] = useState(props.voyage.id_train);
-  // const [gare_depart, setGareDepart] = useState(props.voyage.gare_depart);
-  // const [gare_arrive, setGareArrive] = useState(props.voyage.gare_arrive);
-
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
@@ -27,7 +18,7 @@ export default function EditVoyage(props) {
 
   const patchData = async (data) => {
     try {
-      const response = await fetch(`http://192.168.151.55:8000/voyage`, {
+      const response = await fetch(import.meta.env.VITE_BACKEND +`/voyage`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -61,7 +52,7 @@ export default function EditVoyage(props) {
 },});
 
   const onSubmit = (data) => {
-    patchData(data).then((res) => alert(res));
+    patchData(data).then((res) => alert(JSON.stringify(res)));
      window.location.reload();
   };
 
