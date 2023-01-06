@@ -26,7 +26,7 @@ export default function AddVoyage() {
 
   const postData = async (data) => {
     try {
-      const response = await fetch('http://127.0.0.1:8000/addVoyage', {
+      const response = await fetch('http://192.168.151.55:8000/addVoyage', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -34,7 +34,7 @@ export default function AddVoyage() {
         body: JSON.stringify(data)
       });
       const jsonResponse = await response.json();
-      console.log(jsonResponse);
+      return(jsonResponse);
     } catch (error) {
       console.error(error);
     }
@@ -43,9 +43,8 @@ export default function AddVoyage() {
   const onSubmit = (data) => {
     // () => setCount((count) => count + 1);
     // data.id_voyage = count;
-    data.id_voyage = 4;
     // alert(JSON.stringify(data));
-    postData(data).then((res) => console.log(res));
+    postData(data).then((res) => alert(res));
     window.location.reload();
   };
 
@@ -61,6 +60,14 @@ export default function AddVoyage() {
         </Modal.Header>
         <Modal.Body>
         <Form>
+            <Form.Group>
+                <Form.Label>id_voyage</Form.Label>
+                <Form.Control
+                type="text"
+                name="id_voyage"
+                {...register('id_voyage')} 
+                />
+            </Form.Group>
             <Form.Group>
                 <Form.Label>nom_voyage</Form.Label>
                 <Form.Control
@@ -139,6 +146,14 @@ export default function AddVoyage() {
                 type="text"
                 name="gare_arrive"
                 {...register('gare_arrive')} 
+                />
+            </Form.Group>
+            <Form.Group>
+                <Form.Label>delai</Form.Label>
+                <Form.Control
+                type="text"
+                name="delai"
+                {...register('delai')} 
                 />
             </Form.Group>
             </Form>

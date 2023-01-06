@@ -32,7 +32,7 @@ export default function VoyageTable() {
 
     React.useEffect(() => {
         async function fetchData() {
-        const response = await fetch('http://127.0.0.1:8000/voyage');
+        const response = await fetch('http://192.168.151.55:8000/voyage');
         const data = await response.json();
         console.log(data)
         setVoyages(data);
@@ -69,7 +69,7 @@ export default function VoyageTable() {
             <TableCell align="right">{voyage.id_train}</TableCell>
             <TableCell align="right">{voyage.gare_depart}</TableCell>
             <TableCell align="right">{voyage.gare_arrive}</TableCell>
-            <TableCell align="right">{voyage.delay}</TableCell>
+            <TableCell align="right">{voyage.delai}</TableCell>
             <div style={{display: 'flex', justifyContent: 'space-between', margin: '0 10px'}}>
                 <EditVoyage voyage={voyage}></EditVoyage>
                 <DeleteVoyage voyage={voyage}></DeleteVoyage>

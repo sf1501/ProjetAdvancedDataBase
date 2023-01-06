@@ -7,14 +7,14 @@ import { useForm } from 'react-hook-form';
 
 export default function EditVoyage(props) {
   const [show, setShow] = useState(false);
-  const [nom_voyage, setNomVoyage] = useState(props.voyage.nom_voyage);
-  const [type, setType] = useState(props.voyage.type);
-  const [depart, setDepart] = useState(props.voyage.depart);
-  const [arrive, setArrive] = useState(props.voyage.arrive);
-  const [voie, setVoie] = useState(props.voyage.voie);
-  const [id_train, setIdTrain] = useState(props.voyage.id_train);
-  const [gare_depart, setGareDepart] = useState(props.voyage.gare_depart);
-  const [gare_arrive, setGareArrive] = useState(props.voyage.gare_arrive);
+  // const [nom_voyage, setNomVoyage] = useState(props.voyage.nom_voyage);
+  // const [type, setType] = useState(props.voyage.type);
+  // const [depart, setDepart] = useState(props.voyage.depart);
+  // const [arrive, setArrive] = useState(props.voyage.arrive);
+  // const [voie, setVoie] = useState(props.voyage.voie);
+  // const [id_train, setIdTrain] = useState(props.voyage.id_train);
+  // const [gare_depart, setGareDepart] = useState(props.voyage.gare_depart);
+  // const [gare_arrive, setGareArrive] = useState(props.voyage.gare_arrive);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -27,7 +27,7 @@ export default function EditVoyage(props) {
 
   const patchData = async (data) => {
     try {
-      const response = await fetch(`http://127.0.0.1:8000/voyage/${props.voyage.id_voyage}`, {
+      const response = await fetch(`http://192.168.151.55:8000/voyage`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -35,7 +35,8 @@ export default function EditVoyage(props) {
         body: JSON.stringify(data)
       });
       const jsonResponse = await response.json();
-      console.log(jsonResponse);
+      console.log(jsonResponse)
+      return(jsonResponse)
     } catch (error) {
       console.error(error);
     }
@@ -46,23 +47,22 @@ export default function EditVoyage(props) {
     handleSubmit,
     formState: { errors },
   } = useForm({defaultValues: {
+    id_voyage: props.voyage.id_voyage,
     nom_voyage: props.voyage.nom_voyage, // set the default value for the input
     type: props.voyage.type,
     depart: props.voyage.depart,
     arrive: props.voyage.arrive,
     voie: props.voyage.voie,
-    type: props.voyage.type,
     id_train: props.voyage.id_train,
     gare_depart: props.voyage.gare_depart,
     gare_arrive: props.voyage.gare_arrive,
-    // delay: props.voyage.delay,
+    delai: props.voyage.delai,
 
 },});
 
   const onSubmit = (data) => {
-    patchData(data).then((res) => console.log(res));
-    // deleteData().then((res) => alert(res));
-    // window.location.reload();
+    patchData(data).then((res) => alert(res));
+     window.location.reload();
   };
 
   return (
@@ -78,6 +78,14 @@ export default function EditVoyage(props) {
         </Modal.Header>
         <Modal.Body>
         <Form>
+            <Form.Group>
+                <Form.Label>id_voyage</Form.Label>
+                <Form.Control
+                type="text"
+                name="id_voyage"
+                {...register('id_voyage')} 
+                />
+            </Form.Group>
             <Form.Group>
                 <Form.Label>nom_voyage</Form.Label>
                 <Form.Control
@@ -156,6 +164,14 @@ export default function EditVoyage(props) {
                 type="text"
                 name="gare_arrive"
                 {...register('gare_arrive')} 
+                />
+            </Form.Group>
+            <Form.Group>
+                <Form.Label>delai</Form.Label>
+                <Form.Control
+                type="text"
+                name="delai"
+                {...register('delai')} 
                 />
             </Form.Group>
             </Form>

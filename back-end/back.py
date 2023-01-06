@@ -5,9 +5,10 @@ from pydantic import BaseModel
 import json
 app = FastAPI()
 
-##pour lancer le serveur : uvicorn back:app --reload
+# pour lancer le serveur : uvicorn back:app --reload
 HOST = "127.0.0.1"  # The server's hostname or IP address
 PORT = 65432  # The port used by the server
+
 
 def parse(data):
     # Load the JSON string
@@ -29,6 +30,7 @@ def parse(data):
     print(f"\n data parsed : {parsed_data!r}")
     return parsed_data
 
+
 origins = [
     "*"
 ]
@@ -41,6 +43,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 @app.get("/")
 def get_data():
     # Construct the SELECT statement
@@ -51,12 +54,13 @@ def get_data():
     # Create a socket and connect to the server
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s2:
         s2.connect((HOST, PORT))
-        s2.sendall(statement_bytes) # Send the SELECT statement to the server
+        s2.sendall(statement_bytes)  # Send the SELECT statement to the server
 
         # Receive data from the server
         data = s2.recv(1024)
         print(f"server Received from DB {data!r}")
         return parse(data)
+
 
 @app.get("/train/")
 def get_train():
@@ -68,12 +72,13 @@ def get_train():
     # Create a socket and connect to the server
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s2:
         s2.connect((HOST, PORT))
-        s2.sendall(statement_bytes) # Send the SELECT statement to the server
+        s2.sendall(statement_bytes)  # Send the SELECT statement to the server
 
         # Receive data from the server
         data = s2.recv(1024)
         print(f"server Received from DB {data!r}")
         return parse(data)
+
 
 @app.get("/train/{idTrain}/")
 def get_train(idTrain: int):
@@ -86,12 +91,13 @@ def get_train(idTrain: int):
     # Create a socket and connect to the server
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s2:
         s2.connect((HOST, PORT))
-        s2.sendall(statement_bytes) # Send the SELECT statement to the server
+        s2.sendall(statement_bytes)  # Send the SELECT statement to the server
 
         # Receive data from the server
         data = s2.recv(1024)
         print(f"server Received from DB {data!r}")
         return parse(data)
+
 
 @app.get("/gare/")
 def get_gare():
@@ -103,12 +109,13 @@ def get_gare():
     # Create a socket and connect to the server
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s2:
         s2.connect((HOST, PORT))
-        s2.sendall(statement_bytes) # Send the SELECT statement to the server
+        s2.sendall(statement_bytes)  # Send the SELECT statement to the server
 
         # Receive data from the server
         data = s2.recv(8192)
         print(f"server Received from DB {data!r}")
         return parse(data)
+
 
 @app.get("/gare/{idGare}/")
 def get_gare(idGare: int):
@@ -118,11 +125,10 @@ def get_gare(idGare: int):
     # Encode the statement as a UTF-8 byte string
     statement_bytes = statement.encode('UTF-8')
 
-
     # Create a socket and connect to the server
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s2:
         s2.connect((HOST, PORT))
-        s2.sendall(statement_bytes) # Send the SELECT statement to the server
+        s2.sendall(statement_bytes)  # Send the SELECT statement to the server
 
         # Receive data from the server
         data = s2.recv(1024)
@@ -130,7 +136,7 @@ def get_gare(idGare: int):
         return parse(data)
 
 
-@app.get("/voyage/")
+@app.get("/voyage")
 def get_voyage():
     # Construct the SELECT statement
     statement = f"SELECT id_voyage nom_voyage type depart arrive voie id_train gare_depart gare_arrive delai FROM voyage.db"
@@ -140,7 +146,7 @@ def get_voyage():
     # Create a socket and connect to the server
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s2:
         s2.connect((HOST, PORT))
-        s2.sendall(statement_bytes) # Send the SELECT statement to the server
+        s2.sendall(statement_bytes)  # Send the SELECT statement to the server
 
         # Receive data from the server
         data = s2.recv(8192)
@@ -159,12 +165,13 @@ def get_voyage(idVoyage: int):
     # Create a socket and connect to the server
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s2:
         s2.connect((HOST, PORT))
-        s2.sendall(statement_bytes) # Send the SELECT statement to the server
+        s2.sendall(statement_bytes)  # Send the SELECT statement to the server
 
         # Receive data from the server
         data = s2.recv(1024)
         print(f"server Received from DB {data!r}")
         return parse(data)
+
 
 @app.get("/voyageByGareDepart/{idGare}")
 def get_voyageByGareDepart(idGare: int):
@@ -175,12 +182,13 @@ def get_voyageByGareDepart(idGare: int):
     # Create a socket and connect to the server
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s2:
         s2.connect((HOST, PORT))
-        s2.sendall(statement_bytes) # Send the SELECT statement to the server
+        s2.sendall(statement_bytes)  # Send the SELECT statement to the server
 
         # Receive data from the server
         data = s2.recv(1024)
         print(f"server Received from DB {data!r}")
         return parse(data)
+
 
 @app.get("/voyageByGareArrive/{idGare}")
 def voyageByGareArrive(idGare: int):
@@ -191,12 +199,13 @@ def voyageByGareArrive(idGare: int):
     # Create a socket and connect to the server
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s2:
         s2.connect((HOST, PORT))
-        s2.sendall(statement_bytes) # Send the SELECT statement to the server
+        s2.sendall(statement_bytes)  # Send the SELECT statement to the server
 
         # Receive data from the server
         data = s2.recv(1024)
         print(f"server Received from DB {data!r}")
         return parse(data)
+
 
 @app.get("/voyageByHeureDepart/{depart}")
 def voyageByHeureDepart(depart: str):
@@ -207,12 +216,13 @@ def voyageByHeureDepart(depart: str):
     # Create a socket and connect to the server
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s2:
         s2.connect((HOST, PORT))
-        s2.sendall(statement_bytes) # Send the SELECT statement to the server
+        s2.sendall(statement_bytes)  # Send the SELECT statement to the server
 
         # Receive data from the server
         data = s2.recv(1024)
         print(f"server Received from DB {data!r}")
         return parse(data)
+
 
 @app.get("/voyageByHeureArrivee/{arrive}")
 def voyageByHeureArrivee(arrive: str):
@@ -224,53 +234,77 @@ def voyageByHeureArrivee(arrive: str):
     # Create a socket and connect to the server
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s2:
         s2.connect((HOST, PORT))
-        s2.sendall(statement_bytes) # Send the SELECT statement to the server
+        s2.sendall(statement_bytes)  # Send the SELECT statement to the server
 
         # Receive data from the server
         data = s2.recv(1024)
         print(f"server Received from DB {data!r}")
         return parse(data)
 
+
 class Voyage(BaseModel):
     id_voyage: str
-    nom_voyage:str
-    type:str
-    depart:str
-    arrive:str
-    voie:str
-    id_train:str
-    gare_depart:str
-    gare_arrive:str
+    nom_voyage: str
+    type: str
+    depart: str
+    arrive: str
+    voie: str
+    id_train: str
+    gare_depart: str
+    gare_arrive: str
+    delai: str
 
-@app.post("/addVoyage/")
-async def create_voyage(voyage: Voyage):
-    statement = f"INSERT id_voyage={voyage.id_voyage} nom_voyage={voyage.nom_voyage} type={voyage.type} depart={voyage.depart} arrive={voyage.arrive} voie={voyage.voie} id_train={voyage.id_train} gare_depart={voyage.gare_depart} gare_arrive={voyage.gare_arrive} TO voyage.db"  # Construct the SELECT statement
-    statement_bytes = statement.encode('UTF-8')  # Encode the statement as a UTF-8 byte string
+
+@app.post("/addVoyage")
+def create_voyage(voyage: Voyage):
+    # Construct the SELECT statement
+    statement = f"INSERT id_voyage={voyage.id_voyage} nom_voyage={voyage.nom_voyage} type={voyage.type} depart={voyage.depart} arrive={voyage.arrive} voie={voyage.voie} id_train={voyage.id_train} gare_depart={voyage.gare_depart} gare_arrive={voyage.gare_arrive} delai={voyage.delai} TO voyage.db"
+
+    # Encode the statement as a UTF-8 byte string
+    statement_bytes = statement.encode('UTF-8')
 
     # Create a socket and connect to the server
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s2:
         s2.connect((HOST, PORT))
-        s2.sendall(statement_bytes) # Send the SELECT statement to the server
+        s2.sendall(statement_bytes)  # Send the SELECT statement to the server
 
         # Receive data from the server
         data = s2.recv(1024)
         print(f"server Received from DB {data!r}")
 
-    return voyage
+    return f"{data!r}"
+
 
 @app.delete("/voyage/{item_id}")
-async def delete_item(item_id: int):
-    id = str(item_id)
-    statement = f"DELETE FROM voyage.db WHERE id_voyage=1"
+def delete_item(item_id: str):
+    statement = f"DELETE FROM voyage.db WHERE id_voyage={item_id}"
 
     statement_bytes = statement.encode('UTF_8')
 
     # Create a socket and connect to the server
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s2:
         s2.connect((HOST, PORT))
-        s2.sendall(statement_bytes) # Send the SELECT statement to the server
+        s2.sendall(statement_bytes)  # Send the SELECT statement to the server
 
         # Receive data from the server
         data = s2.recv(1024)
         print(f"server Received from DB {data!r}")
         return "done"
+
+
+@app.patch("/voyage")
+def edit_voyage(voyage: Voyage):
+    statement = f"UPDATE voyage.db SET nom_voyage={voyage.nom_voyage} type={voyage.type} depart={voyage.depart} arrive={voyage.arrive} voie={voyage.voie} id_train={voyage.id_train} gare_depart={voyage.gare_depart} gare_arrive={voyage.gare_arrive} delai={voyage.delai} WHERE id_voyage={voyage.id_voyage}"
+    # Encode the statement as a UTF-8 byte string
+    statement_bytes = statement.encode('UTF-8')
+
+    # Create a socket and connect to the server
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s2:
+        s2.connect((HOST, PORT))
+        s2.sendall(statement_bytes)  # Send the SELECT statement to the server
+
+        # Receive data from the server
+        data = s2.recv(1024)
+        print(f"server Received from DB {data!r}")
+
+    return f"{data!r}"

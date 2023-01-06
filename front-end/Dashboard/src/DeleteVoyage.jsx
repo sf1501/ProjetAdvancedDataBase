@@ -26,15 +26,15 @@ export default function DeleteVoyage(props) {
 //   }
   const deleteData = async (data) => {
     try {
-        const endpoint = `http://127.0.0.1:8000/voyage/${props.voyage.id_voyage}`;
+        const endpoint = `http://192.168.151.55:8000/voyage/${props.voyage.id_voyage}`;
         console.log(endpoint);
         const response = await fetch(endpoint, {
         // const response = await fetch('https://jsonplaceholder.typicode.com/posts/1', {
           method: 'DELETE'
         });
       const jsonResponse = await response.json();
-      console.log(jsonResponse);
-    } catch (error) {
+      return(jsonResponse);
+      } catch (error) {
       console.error(error);
     }
   }
@@ -60,10 +60,10 @@ export default function DeleteVoyage(props) {
   const onSubmit = () => {
     // postData(data).then((res) => console.log(res));
     
-    deleteData().then((res) => console.log(res));
+    deleteData().then((res) => alert(res));
     // deleteData().then((res) => alert(res));
     handleClose();
-    // window.location.reload();
+    window.location.reload();
   };
 
   return (
