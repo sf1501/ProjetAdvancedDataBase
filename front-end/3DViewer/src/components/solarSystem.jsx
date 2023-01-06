@@ -1,6 +1,6 @@
 import { useFrame, useLoader, useThree } from "@react-three/fiber";
 import { useRef } from "react";
-import { PlanetOrbit } from "./planetOrbit";
+import { MemoPlanetOrbit } from "./planetOrbit";
 import { TextureLoader } from "three/src/loaders/TextureLoader";
 import { useRecoilValue } from "recoil";
 import * as THREE from "three";
@@ -68,7 +68,7 @@ export function SolarSystem() {
       ))}
       {planetsInfo.map((planet, index) => (
         <group>
-          <PlanetOrbit
+          <MemoPlanetOrbit
             key={"orbit" + index}
             planetName={planet.name}
             size={planet.size}

@@ -11,5 +11,5 @@ export function Timer() {
     return () => clearInterval(interval);
   }, [setTimer]);
 
-  return <span>Timer: {timer.format("HH:mm:ss")}</span>;
+  return <span>{timer.format("HH:mm:ss")}</span>;
 }

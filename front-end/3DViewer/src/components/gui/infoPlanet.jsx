@@ -10,16 +10,19 @@ export function InfoTables({ id }) {
     data: dataDepartures,
     isLoading: isLoadingDepartures,
     error: errorDepartures,
-  } = useQuery("departures" + id, () =>
-    fetch(import.meta.env.VITE_BACKEND + "/voyageByGareDepart/" + id)
-      .then((data) => data.json())
-      .then((data) =>
-        data.sort(
-          (journeyA, journeyB) =>
-            timeStringToSeconds(journeyA.depart) -
-            timeStringToSeconds(journeyB.depart)
-        )
-      )
+  } = useQuery(
+    "departures" + id,
+    () =>
+      fetch(import.meta.env.VITE_BACKEND + "/voyageByGareDepart/" + id)
+        .then((data) => data.json())
+        .then((data) =>
+          data.sort(
+            (journeyA, journeyB) =>
+              timeStringToSeconds(journeyA.depart) -
+              timeStringToSeconds(journeyB.depart)
+          )
+        ),
+    { refetchInterval: 5000 }
   );
   const {
     data: dataArrivals,
