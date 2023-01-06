@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+
 export const planetsList = [
   "Sun",
   "Earth",
@@ -9,6 +11,8 @@ export const planetsList = [
   "Neptune",
   "Venus",
 ];
+
+export const timer = dayjs().hour(12).minute(0).second(0);
 
 export const planetsInfo = [
   {

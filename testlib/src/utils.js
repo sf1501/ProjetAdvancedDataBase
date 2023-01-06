@@ -58,7 +58,7 @@ export function progressiveTrajectory(spaceshipName, scene, timer) {
     );
     directionVector.subVectors(destinationPlanetVector, originPlanetVector);
 
-    if (spaceshipObject.factor > 0.99) {
+    if (spaceshipObject.factor > 0.95) {
       scene.remove(spaceshipObject);
       scene.remove(line);
     } else {

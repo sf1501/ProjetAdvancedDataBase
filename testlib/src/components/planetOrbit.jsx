@@ -37,5 +37,3 @@ export function PlanetOrbit({
     </mesh>
   );
 }
-
-export const MemoPlanetOrbit = memo(PlanetOrbit);
