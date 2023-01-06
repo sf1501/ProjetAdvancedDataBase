@@ -46,23 +46,13 @@ app.add_middleware(
 
 @app.get("/")
 def get_data():
-    # Construct the SELECT statement
-    statement = f"SELECT id_train name_train capacite voyage FROM train.db"
-    # Encode the statement as a UTF-8 byte string
-    statement_bytes = statement.encode('UTF-8')
-
-    # Create a socket and connect to the server
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s2:
         s2.connect((HOST, PORT))
-        s2.sendall(statement_bytes)  # Send the SELECT statement to the server
 
-        # Receive data from the server
-        data = s2.recv(1024)
-        print(f"server Received from DB {data!r}")
-        return parse(data)
+        return "Connected to the spaceship database server !"
 
 
-@app.get("/train/")
+@app.get("/train")
 def get_train():
     # Construct the SELECT statement
     statement = f"SELECT id_train name_train capacite voyage FROM train.db"
@@ -99,7 +89,7 @@ def get_train(idTrain: int):
         return parse(data)
 
 
-@app.get("/gare/")
+@app.get("/gare")
 def get_gare():
     # Construct the SELECT statement
     statement = f"SELECT id_gare name nb_voie FROM gare.db"

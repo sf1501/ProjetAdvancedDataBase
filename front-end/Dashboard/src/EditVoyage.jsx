@@ -176,52 +176,6 @@ export default function EditVoyage(props) {
             </Form.Group>
             </Form>
 
-        {/* <form>
-          <p>nom_voyage</p>
-          <input {...register('nom_voyage')} 
-          onChange={(event) => setNomVoyage(event.target.value)}
-          />
-          <p>type</p>
-          <input {...register('type')} 
-          />
-          <p>depart</p>
-          <input {...register('depart')} 
-          />
-          <p>arrive</p>
-          <input {...register('arrive')} 
-          />
-          <p>voie</p>
-          <input {...register('voie')} 
-          />
-          <p>type</p>
-          <input {...register('type')} 
-          />
-          <p>id_train</p>
-          <input {...register('id_train')} 
-          />
-          <p>gare_depart</p>
-          <input {...register('gare_depart')} 
-          />
-          <p>gare_arrive</p>
-          <input {...register('gare_arrive')} 
-          />
-          <p>delay</p>
-          <input {...register('delay')} 
-          />
-        </form> */}
-
-          {/* <Form>
-            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-              <Form.Label>Nom voyage</Form.Label>
-              <Form.Control
-                type="nom_voyage"
-                defaultValue={props.voyage.nom_voyage}
-                >
-
-              </Form.Control>
-            </Form.Group>
-            
-          </Form> */}
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
