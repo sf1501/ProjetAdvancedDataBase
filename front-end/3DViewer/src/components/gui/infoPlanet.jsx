@@ -10,37 +10,44 @@ export function InfoTables({ id }) {
     data: dataDepartures,
     isLoading: isLoadingDepartures,
     error: errorDepartures,
-  } = useQuery("departures" + id, () =>
-    fetch(import.meta.env.VITE_BACKEND + "/voyageByGareDepart/" + id)
-      .then((data) => data.json())
-      .then((data) =>
-        data.sort(
-          (journeyA, journeyB) =>
-            timeStringToSeconds(journeyA.depart) -
-            timeStringToSeconds(journeyB.depart)
-        )
-      )
+  } = useQuery(
+    "departures" + id,
+    () =>
+      fetch(import.meta.env.VITE_BACKEND + "/voyageByGareDepart/" + id)
+        .then((data) => data.json())
+        .then((data) =>
+          data.sort(
+            (journeyA, journeyB) =>
+              timeStringToSeconds(journeyA.depart) -
+              timeStringToSeconds(journeyB.depart)
+          )
+        ),
+    { refetchInterval: 5000 }
   );
   const {
     data: dataArrivals,
     isLoading: isLoadingArrivals,
     error: errorArrivals,
-  } = useQuery("arrivals" + id, () =>
-    fetch(import.meta.env.VITE_BACKEND + "/voyageByGareArrive/" + id)
-      .then((data) => data.json())
-      .then((data) =>
-        data.sort(
-          (journeyA, journeyB) =>
-            timeStringToSeconds(journeyA.arrive) -
-            timeStringToSeconds(journeyB.arrive)
-        )
-      )
+  } = useQuery(
+    "arrivals" + id,
+    () =>
+      fetch(import.meta.env.VITE_BACKEND + "/voyageByGareArrive/" + id)
+        .then((data) => data.json())
+        .then((data) =>
+          data.sort(
+            (journeyA, journeyB) =>
+              timeStringToSeconds(journeyA.arrive) -
+              timeStringToSeconds(journeyB.arrive)
+          )
+        ),
+    { refetchInterval: 5000 }
   );
 
   if (isLoadingDepartures || isLoadingArrivals)
     return <div className="infoPlanet">loading</div>;
 
-  if (errorDepartures || errorArrivals) return <div>error</div>;
+  if (errorDepartures || errorArrivals)
+    return <div className="infoPlanet">error</div>;
 
   return (
     <div className="infoPlanet">

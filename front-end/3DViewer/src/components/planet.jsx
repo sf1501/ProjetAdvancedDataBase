@@ -26,7 +26,7 @@ export function Planet({ planetName, size, position, planetRotationSpeed }) {
       <meshBasicMaterial map={planetTexture} />
       <PerspectiveCamera
         name={"camera" + planetName}
-        fov={45}
+        fov={90}
         far={10000000}
         near={0.5}
         aspect={window.innerWidth / window.innerHeight}
