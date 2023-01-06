@@ -14,7 +14,7 @@ export const planetsInfo = [
   {
     id: 0,
     name: "Sun",
-    size: 1000,
+    size: 10,
     position: 0,
     orbit_rotation_speed: 0,
     self_rotation_speed: 0.01,

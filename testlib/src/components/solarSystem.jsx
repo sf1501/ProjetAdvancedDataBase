@@ -31,7 +31,7 @@ export function SolarSystem() {
     { refetchInterval: 10000 }
   );
   const focusedObject = useRecoilValue(focusedObjectState);
-  console.log(focusedObject);
+
   useFrame((state, delta) => {
     if (focusedObject !== "") {
       const objectFromScene = scene.getObjectByProperty("name", focusedObject);
@@ -56,30 +56,28 @@ export function SolarSystem() {
   return (
     <mesh ref={mesh}>
       {journeys.map((journey, index) => (
-        <SpaceshipManager key={index} journey={journey} />
+        <group>
+          <SpaceshipManager key={index} journey={journey} />
+          <TrajectoryLine
+            key={"line" + index}
+            spaceshipName={journey.nom_voyage}
+            spaceshipOrigin={journey.gare_depart}
+            spaceshipDestination={journey.gare_arrive}
+          />
+        </group>
       ))}
-      {journeys.map((journey, index) => (
-        <TrajectoryLine
-          key={index}
-          spaceshipName={journey.nom_voyage}
-          spaceshipOrigin={journey.gare_depart}
-          spaceshipDestination={journey.gare_arrive}
-        />
-      ))}
-      {planetsInfo.map((planet, index) => {
-        return (
+      {planetsInfo.map((planet, index) => (
+        <group>
           <MemoPlanetOrbit
-            key={index}
+            key={"orbit" + index}
             planetName={planet.name}
             size={planet.size}
             orbitRotationSpeed={planet.orbit_rotation_speed}
             planetRotationSpeed={planet.self_rotation_speed}
           />
-        );
-      })}
-      {planetsInfo.map((planet, index) => {
-        return <PlanetOrbitLine key={index} radius={planet.position} />;
-      })}
+          <PlanetOrbitLine key={index} radius={planet.position} />
+        </group>
+      ))}
     </mesh>
   );
 }

@@ -6,8 +6,8 @@ export function Timer() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setTimer((state) => state.add(1, "s"));
-    }, 10);
+      setTimer((state) => state.add(10, "s"));
+    }, 100);
     return () => clearInterval(interval);
   }, [setTimer]);
 

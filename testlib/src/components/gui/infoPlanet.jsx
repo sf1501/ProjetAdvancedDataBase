@@ -37,7 +37,8 @@ export function InfoTables({ id }) {
       )
   );
 
-  if (isLoadingDepartures || isLoadingArrivals) return <div>loading</div>;
+  if (isLoadingDepartures || isLoadingArrivals)
+    return <div className="infoPlanet">loading</div>;
 
   if (errorDepartures || errorArrivals) return <div>error</div>;
 
