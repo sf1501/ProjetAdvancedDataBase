@@ -7,5 +7,5 @@ Pour executer toutes les parties du projet :
  - Frontend Dashboard: se mettre dans le dossier front-end/Dashboard puis executer : **npm run dev**
  - Front Système solaire: se mettre dans le dossier front-end/3DViewer puis executer : **npm run dev**
 
-Les addresses IP et ports sont normalement déjà gérés pour que tout le projet s'exécute en local. S'il y a tout de même des soucis, vous pouvez regarder les fichiers .env pour les fronts, le back.py pour le back et le fichier client pour la bdd.
+Les addresses IP et ports sont normalement déjà gérés pour que tout le projet s'exécute en local. S'il y a tout de même des soucis, vous pouvez regarder les fichiers *.env* pour les fronts, le fichier *back.py* pour le back et le fichier *client.py* pour la bdd.
 
